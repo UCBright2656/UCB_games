@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html><head>
-<link rel="icon" href="https://ucbright2656.github.io/UCB_games/picture/op_logo3.png">
-<title>Optimus games</title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
 <script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
 <script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
@@ -99,34 +97,37 @@ update();}</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='Line.tonyu' data-lastupdate='1696809985412' ></script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696813071057' >$Screen.resize($screenWidth,$screenHeight*2);
-new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=2};
-new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0};
-new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
-new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696831894509' >$Screen.resize($screenWidth,$screenHeight*2);
+new Line{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
+new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+92};
+new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+94};
+new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0,p=$pat_mapchip+94};
+new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0,p=$pat_mapchip+94};
 new Next{x:100,y:200,scaleX:3,scaleY:3,p:1};
-new Label{x:100,y:100,size:30,template:"↓次"};
+new Label{x:100,y:100,size:30,fillStyle:"black",template:"↓次"};
 $score=0;
-new Label{x:$screenWidth-120,y:100,size:30,template:"スコア: $score"};
+new Label{x:$screenWidth-120,y:100,size:30,fillStyle:"black",template:"スコア: $score"};
+
 while(1) {
     if(getkey("D")==1)$gameover=0;
     if ($gameover<1){
         all().die();
         $frontLayer.all(Label).die();
-        new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,template:"ゲームオーバー"};
-        new Label{x:$screenWidth/2,y:$screenHeight/2+60,size:30,template:"Rを押して再開"};
-        new Label{x:$screenWidth/2,y:$screenHeight/2+120,size:30,template:"スコア: $score"};
+        new Line{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,fillStyle:"black",template:"ゲームオーバー"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2+60,size:30,fillStyle:"black",template:"Rを押して再開"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2+120,size:30,fillStyle:"black",template:"スコア: $score"};
         if(getkey("R")==1){
             $frontLayer.all(Label).die();
             //ここから
-            new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=2};
-            new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0};
-            new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
-            new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+            new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+92};
+            new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+94};
+            new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0,p=$pat_mapchip+94};
+            new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0,p=$pat_mapchip+94};
             new Next{x:100,y:200,scaleX:3,scaleY:3,p:1};
-            new Label{x:100,y:100,size:30,template:"↓次"};
+            new Label{x:100,y:100,size:30,fillStyle:"black",template:"↓次"};
             $score=0;
-            new Label{x:$screenWidth-120,y:100,size:30,template:"スコア: $score"};
+            new Label{x:$screenWidth-120,y:100,size:30,fillStyle:"black",template:"スコア: $score"};
             //ここまで
             $gameover=1;
         }
@@ -156,11 +157,11 @@ while(1) {
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Next.tonyu' data-lastupdate='1696818498522' >p=$pat_Suica+0;
+<script language='text/tonyu' type='text/tonyu' data-filename='Next.tonyu' data-lastupdate='1696828629717' >p=$pat_Suica+0;
 fruitnext=0;
 while(1) {
     fruit=(rnd(4));
-    if(getkey("mouseleft")==1){
+    if((getkey("mouseleft")==1) && $mouseX>0 && $mouseX<$screenWidth){
         
         if(fruit==0)
         p=$pat_Suica+0;
@@ -271,6 +272,39 @@ while(1) {
 
 update();}</script>
 
+<script language='text/tonyu' type='text/tonyu' data-filename='StartMapEditor.tonyu' data-lastupdate='1696830332750' >//「実行」→「StartMapEditorを実行」で起動
+
+$editorConfig={
+    //レイヤー名，レイヤーで使えるパターン
+    layers:[
+    //奥のレイヤー
+    {name:"base", pats:[-1,
+        $pat_mapchip+88, $pat_mapchip+89, $pat_mapchip+90,
+        $pat_mapchip+91, $pat_mapchip+124, $pat_mapchip+62,
+        $pat_mapchip+78,
+    ]},
+    //手前のレイヤー
+    {name:"on", pats:[-1,
+        $pat_mapchip+1, $pat_mapchip+2, $pat_mapchip+3,
+        $pat_mapchip+4, $pat_neko, $pat_neko+50,
+        $pat_neko+49,
+    ]},
+    ],
+
+    // 編集対象のマップファイルのあるフォルダ
+    mapDir: file("../maps/"),
+
+    // オプション：「Play」ボタンで読み込まれるページ
+    //mainPage: Stage,
+
+    // オプション：「Title」ボタンで読み込まれるページ
+    //titlePage: Title,
+
+    showHelp: true,//ヘルプの表示
+};
+loadPage(MapFiles);
+</script>
+
 <script language='text/tonyu' type='text/tonyu' data-filename='Strawberry.tonyu' data-lastupdate='1696814533542' >extends BodyActor;
 
 shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
@@ -313,7 +347,7 @@ while(1) {
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696803871176' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696830332421' >
 {
     "compiler": {
         "namespace": "user",
@@ -321,6 +355,9 @@ update();}</script>
         "dependingProjects": [
             {
                 "namespace": "kernel"
+            },
+            {
+                "namespace": "mapEditor2"
             }
         ]
     },
@@ -341,7 +378,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1696819301141' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1696831928972' >
 {
     "images": [
         {
