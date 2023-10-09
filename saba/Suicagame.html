@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Apple.tonyu' data-lastupdate='1696816273327' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=4;
+    p=$pat_Suica+5;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Apple)){
+        new Pear{x:x,y:y};
+        $score=$score+21;
+        crashTo(Apple).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Cherry.tonyu' data-lastupdate='1696818418634' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=1.5;
+    p=$pat_Suica+0;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Cherry)){
+        new Strawberry{x:x,y:y};
+        $score=$score+1;
+        crashTo(Cherry).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Decopon.tonyu' data-lastupdate='1696814547756' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=3;
+    p=$pat_Suica+3;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Decopon)){
+        new Persimmon{x:x,y:y};
+        $score=$score+10;
+        crashTo(Decopon).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Floor.tonyu' data-lastupdate='1696803854647' >extends BodyActor;
+
+isStatic=true; // 動かない物理オブジェクト</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Grape.tonyu' data-lastupdate='1696814540074' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=2.5;
+    p=$pat_Suica+2;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Grape)){
+        new Decopon{x:x,y:y};
+        $score=$score+6;
+        crashTo(Grape).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Line.tonyu' data-lastupdate='1696809985412' ></script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696813071057' >$Screen.resize($screenWidth,$screenHeight*2);
+new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=2};
+new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0};
+new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+new Next{x:100,y:200,scaleX:3,scaleY:3,p:1};
+new Label{x:100,y:100,size:30,template:"↓次"};
+$score=0;
+new Label{x:$screenWidth-120,y:100,size:30,template:"スコア: $score"};
+while(1) {
+    if(getkey("D")==1)$gameover=0;
+    if ($gameover<1){
+        all().die();
+        $frontLayer.all(Label).die();
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,template:"ゲームオーバー"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2+60,size:30,template:"Rを押して再開"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2+120,size:30,template:"スコア: $score"};
+        if(getkey("R")==1){
+            $frontLayer.all(Label).die();
+            //ここから
+            new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=2};
+            new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0};
+            new Floor{x:0,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+            new Floor{x:$screenWidth,y:$screenHeight,scaleX:1,scaleY:100, rotation:0};
+            new Next{x:100,y:200,scaleX:3,scaleY:3,p:1};
+            new Label{x:100,y:100,size:30,template:"↓次"};
+            $score=0;
+            new Label{x:$screenWidth-120,y:100,size:30,template:"スコア: $score"};
+            //ここまで
+            $gameover=1;
+        }
+    }
+update();}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Melon.tonyu' data-lastupdate='1696818663487' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=6;
+    p=$pat_Suica+10;
+    if(y<$screenHeight/2-10)$gameover=0;
+    
+    if(crashTo(Melon)){
+        new Wartermelon{x:x,y:y};
+        $score=$score+55;
+        crashTo(Melon).die();
+        die();
+        
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Next.tonyu' data-lastupdate='1696818498522' >p=$pat_Suica+0;
+fruitnext=0;
+while(1) {
+    fruit=(rnd(4));
+    if(getkey("mouseleft")==1){
+        
+        if(fruit==0)
+        p=$pat_Suica+0;
+        if(fruit==1)
+        p=$pat_Suica+1;
+        if(fruit==2)
+        p=$pat_Suica+2;
+        if(fruit==3)
+        p=$pat_Suica+3;
+        
+        if(fruitnext==0)
+        new Cherry{x=$mouseX, y=$screenHeight/2};
+        if(fruitnext==1)
+        new Strawberry{x=$mouseX, y=$screenHeight/2};
+        if(fruitnext==2)
+        new Grape{x=$mouseX, y=$screenHeight/2};
+        if(fruitnext==3)
+        new Decopon{x=$mouseX, y=$screenHeight/2};
+        
+        fruitnext=fruit;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Peach.tonyu' data-lastupdate='1696818653100' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=5;
+    p=$pat_Suica+8;
+    if(y<$screenHeight/2-10)$gameover=0;
+    
+    if(crashTo(Peach)){
+        new Pine{x:x,y:y};
+        $score=$score+45;
+        crashTo(Peach).die();
+        die();
+        
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Pear.tonyu' data-lastupdate='1696818669626' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=4.5;
+    p=$pat_Suica+7;
+    if(y<$screenHeight/2-10)$gameover=0;
+    
+    if(crashTo(Pear)){
+        new Peach{x:x,y:y};
+        $score=$score+28;
+        crashTo(Pear).die();
+        die();
+        
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Persimmon.tonyu' data-lastupdate='1696814555776' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=3.5;
+    p=$pat_Suica+4;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Persimmon)){
+        new Apple{x:x,y:y};
+        $score=$score+15;
+        crashTo(Persimmon).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Pine.tonyu' data-lastupdate='1696818674684' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=5.5;
+    p=$pat_Suica+9;
+    if(y<$screenHeight/2-10)$gameover=0;
+    
+    if(crashTo(Pine)){
+        new Melon{x:x,y:y};
+        $score=$score+36;
+        crashTo(Pine).die();
+        die();
+        
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Strawberry.tonyu' data-lastupdate='1696814533542' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=2;
+    p=$pat_Suica+1;
+    if(y<$screenHeight/2-10)$gameover=0;
+
+    if(crashTo(Strawberry)){
+        new Grape{x:x,y:y};
+        $score=$score+3;
+        crashTo(Strawberry).die();
+        die();
+        
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Wartermelon.tonyu' data-lastupdate='1696818680076' >extends BodyActor;
+
+shape="circle"; // 衝突判定を円形にする場合"circle" 四角形なら"box"
+density=1;//密度の設定
+friction=0;//摩擦の設定
+restitution=0;//反発係数の設定
+//ここまで固定    
+while(1) {
+    scaleX=6.5;
+    p=$pat_Suica+11;
+    if(y<$screenHeight/2-10)$gameover=0;
+    
+    if(crashTo(Wartermelon)){
+        new Cherry{x:x,y:y};
+        crashTo(Wartermelon).die();
+        die();
+        
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696803871176' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {
+        "box2d": 1
+    },
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1696819301141' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "type": "wh",
+            "name": "$pat_Suica",
+            "url": "ls:images/Suica.png",
+            "pwidth": 33,
+            "pheight": 33
+        }
+    ],
+    "sounds": []
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/Suica.png' data-wrap='80' data-lastupdate='1696818400936' >data:image/png;base64,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\
+lFTkSuQmCC
+</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
