@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Background.tonyu' data-lastupdate='1696934536896' ></script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Cat.tonyu' data-lastupdate='1697009836986' >$ehp=15;
+$ehoukou=0;
+while(1) {
+    zOrder=-2;
+    
+    if((rnd(20))==1){
+        $ehoukou=(rnd(4));
+        new Etama{x=x, y=y};
+    }
+    if(crashTo(Tama)){
+        crashTo(Tama).die();
+        $ehp=$ehp-1;
+    }
+
+    if ($ehp<1){
+        $ehp=0;
+        die();
+    }
+    sx=x;
+    sy=y;
+    //ここから移動
+    if ($ehoukou==1 && y<60+(7*49)) y+=3;
+    if ($ehoukou==3 && x<60+(7*49)) x+=3;
+    if ($ehoukou==0 && y>60) y-=3; 
+    if ($ehoukou==2 && x>60) x-=3; 
+    if ((crashTo(Etile))){
+        x=sx;
+        y=sy;//移動前の値に戻す
+        if((rnd(10))==1){
+            $ehoukou=(rnd(4));
+            new Etama{x=x, y=y};
+        }
+    }
+    if ((crashTo(Ntile))){
+        x=sx;
+        y=sy;//移動前の値に戻す
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Etama.tonyu' data-lastupdate='1696934536904' >houkou=$ehoukou;
+p=$pat_base+13;
+while(1) {
+    zOrder=-1;
+    if (houkou==0)y-=8;
+    if (houkou==1)y+=8;
+    if (houkou==2)x-=8;
+    if (houkou==3)x+=8;
+    
+    if(crashTo(Ntile)){
+        die();
+    }
+    
+    /*
+    if(crashTo(Tama)){
+        crashTo(Tama).die();
+        die();
+    }
+    */
+    if(x>$screenWidtht)die();
+    if(x<0)die();
+    if(y>$screenHeight)die();
+    if(y<0)die();
+    update();
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Etile.tonyu' data-lastupdate='1696934536908' >while(1){
+    if(crashTo(Etama)){
+        new Tile{x=x, y=y,scaleX:1.5,scaleY:1.5,p:$pat_mapchip+94};
+        die();
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696934536925' >new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
+
+habax=8;
+habay=4;
+
+select=0;
+new Label{x:$screenWidth/2,y:$screenHeight/2-20,size:20,fillStyle:"black",template:"A or B or Cを押して"};
+new Label{x:$screenWidth/2,y:$screenHeight/2,size:20,fillStyle:"black",template:"ステージを選択してください"};
+
+while(1){
+    if ((getkey("A")==1) && select==0){//satageA
+        select=1;
+        $frontLayer.all(Label).die();
+        for (i=0; i<habax; i++) {
+            for (j=0; j<habay; j++) {
+                new Tile{x:60+(i*49),y:60+(j*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+94};
+            }
+            for (j=0; j<habay; j++) {
+                new Etile{x:60+(i*49),y:60+((j+4)*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+92};
+            }
+        }
+
+        new Ziki{x=$screenWidth/2, y=60+(7*49),p=$pat_neko+10};
+        new Cat{x=$screenWidth/2, y=60,p=$pat_neko+20};
+
+        new Label{x:$screenWidth-90,y:20,size:20,fillStyle:"black",template:"自分HP: $hp"};
+        new Label{x:75,y:20,size:20,fillStyle:"black",template:"敵HP: $ehp"};
+    }
+    
+    if ((getkey("B")==1) && select==0){//satageB
+        select=1;
+        $frontLayer.all(Label).die();
+        for (i=0; i<habax; i++) {
+            for (j=0; j<habay; j++) {
+                new Tile{x:60+(i*49),y:60+(j*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+94};
+            }
+            for (j=0; j<habay; j++) {
+                new Etile{x:60+(i*49),y:60+((j+4)*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+92};
+            }
+        }
+        
+        new Ntile{x:60+(2*49),y:60+(2*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(2*49),y:60+(5*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(5*49),y:60+(2*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(5*49),y:60+(5*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+
+        new Ziki{x=$screenWidth/2, y=60+(7*49),p=$pat_neko+10};
+        new Cat{x=$screenWidth/2, y=60,p=$pat_neko+20};
+
+        new Label{x:$screenWidth-90,y:20,size:20,fillStyle:"black",template:"自分HP: $hp"};
+        new Label{x:75,y:20,size:20,fillStyle:"black",template:"敵HP: $ehp"};
+    }
+    
+    if ((getkey("C")==1) && select==0){//satageC
+        select=1;
+        $frontLayer.all(Label).die();
+        for (i=0; i<habax; i++) {
+            for (j=0; j<habay; j++) {
+                new Tile{x:60+(i*49),y:60+(j*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+94};
+            }
+            for (j=0; j<habay; j++) {
+                new Etile{x:60+(i*49),y:60+((j+4)*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+92};
+            }
+        }
+        
+        new Ntile{x:60+(0*49),y:60+(2*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(1*49),y:60+(2*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(2*49),y:60+(2*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(5*49),y:60+(5*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(6*49),y:60+(5*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+        new Ntile{x:60+(7*49),y:60+(5*49),scaleX:1.5,scaleY:1.5,p:$pat_mapchip+95};
+
+        new Ziki{x=$screenWidth/2, y=60+(7*49),p=$pat_neko+10};
+        new Cat{x=$screenWidth/2, y=60,p=$pat_neko+20};
+
+        new Label{x:$screenWidth-90,y:20,size:20,fillStyle:"black",template:"自分HP: $hp"};
+        new Label{x:75,y:20,size:20,fillStyle:"black",template:"敵HP: $ehp"};
+    }
+    
+    if ($ehp<1){//敗北
+        all().die();
+        $frontLayer.all(Label).die();
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
+        new Label{x:$screenWidth/2,y:$screenHeight/2-20,size:20,fillStyle:"black",template:"勝利！！"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:20,fillStyle:"black",template:"スペースキーを押してもう一度プレイ"};
+        $ehp=15;
+        select=-1;
+    }
+    
+    if ($hp<1){//勝利
+        all().die();
+        $frontLayer.all(Label).die();
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
+        new Label{x:$screenWidth/2,y:$screenHeight/2-20,size:20,fillStyle:"black",template:"敗北"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:20,fillStyle:"black",template:"スペースキーを押してもう一度プレイ"};
+        $hp=15;
+        select=-1;
+    }
+    
+    if ((select==-1) && (getkey("space")==1)){//再開処理
+        $frontLayer.all(Label).die();
+        
+        habax=8;
+        habay=4;
+
+        select=0;
+        new Label{x:$screenWidth/2,y:$screenHeight/2-20,size:20,fillStyle:"black",template:"A or B or Cを押して"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:20,fillStyle:"black",template:"ステージを選択してください"};
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Ntile.tonyu' data-lastupdate='1696934536929' >while(1){
+    if(crashTo(Tile)){
+        crashTo(Tile).die();
+    }
+    if(crashTo(Etile)){
+        crashTo(Etile).die();
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Tama.tonyu' data-lastupdate='1696934536937' >houkou=$houkou;
+p=$pat_base+18;
+while(1) {
+    zOrder=-1;
+    if (houkou==0)y-=8;
+    if (houkou==1)y+=8;
+    if (houkou==2)x-=8;
+    if (houkou==3)x+=8;
+    
+    if(crashTo(Etama)){
+        crashTo(Etama).die();
+        die();
+    }
+    if(crashTo(Ntile)){
+        die();
+    }
+    
+    if(x>$screenWidtht)die();
+    if(x<0)die();
+    if(y>$screenHeight)die();
+    if(y<0)die();
+    update();
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Tile.tonyu' data-lastupdate='1696934536942' >while(1){
+    if(crashTo(Tama)){
+        new Etile{x=x, y=y,scaleX:1.5,scaleY:1.5,p:$pat_mapchip+92};
+        die();
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1697009245390' >$hp=15;
+while(1) {
+    $zikix=x;
+    $zikiy=y;
+    
+    zOrder=-2;
+    if(getkey("W")==1){
+        $houkou=0;
+        new Tama{x=x, y=y};
+    }
+    if(getkey("S")==1){
+        $houkou=1;
+        new Tama{x=x, y=y};
+    }
+    if(getkey("A")==1){
+        $houkou=2;
+        new Tama{x=x, y=y};
+    }
+    if(getkey("D")==1){
+        $houkou=3;
+        new Tama{x=x, y=y};
+    }
+    if(crashTo(Etama)){
+        crashTo(Etama).die();
+        $hp=$hp-1;
+    }
+    /*
+    if(crashTo(Teki)){
+        crashTo(Teki).die();
+        $hp=$hp-3;
+    }*/
+    if ($hp<1){
+        $hp=0;
+        //all(Teki).die();
+        die();
+    }
+    sx=x;
+    sy=y;
+    //ここから移動
+    if (getkey(40)>0 && y<60+(7*49)) y+=3;
+    if (getkey(39)>0 && x<60+(7*49)) x+=3;
+    if (getkey(38)>0 && y>60) y-=3; 
+    if (getkey(37)>0 && x>60) x-=3; 
+    if ((crashTo(Tile))){
+        x=sx;
+        y=sy;//移動前の値に戻す
+    }
+    if ((crashTo(Ntile))){
+        x=sx;
+        y=sy;//移動前の値に戻す
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696934536931' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {
+        "box2d": 1
+    },
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697009961896' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        }
+    ],
+    "sounds": []
+}</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
