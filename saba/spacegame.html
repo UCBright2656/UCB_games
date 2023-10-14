@@ -9,7 +9,7 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Etama.tonyu' data-lastupdate='1696681547379' >extends SpriteChar;
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Etama.tonyu' data-lastupdate='1696681548000' >extends SpriteChar;
 houkou=(rnd(3));
 while(1) {
     
@@ -21,7 +21,7 @@ while(1) {
     update();
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696682607652' >extends SpriteChar;
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697286485503' >extends SpriteChar;
 $score=0;
 x=10000;
 new Ziki{x=$screenWidth/2, y=400,p=$pat_sample+0};
@@ -40,6 +40,7 @@ while(1) {
         new Label{x:$screenWidth/2,y:$screenHeight/2+20,template:"Rを押して再開"};
         if(getkey("R")==1){
             $frontLayer.all(Label).die();
+            $score=0;
             new Ziki{x=$screenWidth/2, y=400,p=$pat_sample+0};
             new Teki{x=050, y=200,p=$pat_sample+3};
             new Teki{x=100, y=150,p=$pat_sample+3};
@@ -50,7 +51,7 @@ update();}
 
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Tama.tonyu' data-lastupdate='1696682821013' >extends SpriteChar;
+<script language='text/tonyu' type='text/tonyu' data-filename='Tama.tonyu' data-lastupdate='1696682822000' >extends SpriteChar;
 while(1) {
     $pat_sample+1;
     y=y-8;	
@@ -64,7 +65,7 @@ while(1) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Teki.tonyu' data-lastupdate='1696682803129' >extends SpriteChar;
+<script language='text/tonyu' type='text/tonyu' data-filename='Teki.tonyu' data-lastupdate='1696682804000' >extends SpriteChar;
 p=$pat_sample+3;
 hp=3;
 houkou=0;
@@ -93,7 +94,7 @@ while(1) {
 update();}
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1696682719952' >extends SpriteChar;
+<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1696682720000' >extends SpriteChar;
 p=$pat_sample+0;
 $hp=5;
 while(1) {
@@ -120,7 +121,7 @@ while(1) {
 update();}
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696678930968' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1696678932000' >
 {
     "compiler": {
         "namespace": "user",
@@ -146,7 +147,7 @@ update();}
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1696682847796' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697286499201' >
 {
     "images": [
         {
