@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Background.tonyu' data-lastupdate='1697099903503' ></script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Card.tonyu' data-lastupdate='1697179352195' >$order+=1;
+fromx=x;
+fromy=y;
+kirikae=0;
+myorder=$order;
+while(1){
+    if (iti==1){
+        tox=$screenWidth/2-40-10;
+        toy=55+250;
+        $ko1=($trump[myorder]+1)%13;
+        if ($ko1==0) $ko1=13;
+    }
+    
+    if (iti==2){
+        tox=$screenWidth/2;
+        toy=55+250;
+        $ko2=($trump[myorder]+1)%13;
+        if ($ko2==0) $ko2=13;
+    }
+    
+    if (iti==3){
+        tox=$screenWidth/2+40+10;
+        toy=55+250;
+        $ko3=($trump[myorder]+1)%13;
+        if ($ko3==0) $ko3=13;
+    }
+    
+    if (iti==4){
+        tox=$screenWidth/2-40-10;
+        toy=55;
+        $oya1=($trump[myorder]+1)%13;
+        if ($oya1==0) $oya1=13;
+    }
+    
+    if (iti==5){
+        tox=$screenWidth/2;
+        toy=55;
+        $oya2=($trump[myorder]+1)%13;
+        if ($oya2==0) $oya2=13;
+    }
+    
+    if (iti==6){
+        tox=$screenWidth/2+40+10;
+        toy=55;
+        $oya3=($trump[myorder]+1)%13;
+        if ($oya3==0) $oya3=13;
+    }
+    
+    if (x<tox){
+        x+=(tox-fromx)/60;
+        y+=(toy-fromy)/60;
+        $nowmoving=1;
+    }
+    
+    if ((x>=tox) && kirikae==0){
+        x=tox;
+        y=toy;
+        kirikae=1;
+        $nowmoving=0;
+        p=$pat_card1+$trump[$order];
+        
+        if (iti==5)$end=1;
+        if (iti==6)$end=2;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697254957297' >////初期設定
+$score=100;
+$kake=10;
+////ここからリセット以下と共通
+
+//背景
+
+//緑
+new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_card1+55};
+//黄緑
+new Background{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};//山札
+
+new Background{x:$screenWidth/2-40-10,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};//親
+new Background{x:$screenWidth/2,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};
+new Background{x:$screenWidth/2+40+10,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};
+
+new Background{x:$screenWidth/2-40-10,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};//子
+new Background{x:$screenWidth/2,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};
+new Background{x:$screenWidth/2+40+10,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};
+
+//初期値
+$order=0;
+$itidash=2;
+$end=0;
+$nowmoving=0;
+
+$ko1=0;
+$ko2=0;
+$ko3=0;
+$oya1=0;
+$oya2=0;
+$oya3=0;
+
+//スコア表示
+new Label{x:$screenWidth/2+150,y:55+50,size:30,fillStyle:"black",template:"持ち点:$score"};
+new Label{x:$screenWidth/2+150,y:55+90,size:30,fillStyle:"black",template:"掛け点:$kake"};
+
+//配列
+$trump=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29
+,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+
+for (i=0; i<200; i++) {
+    r1=rnd(52);
+    r2=rnd(52);
+    wk=$trump[r1];
+    $trump[r1]=$trump[r2];
+    $trump[r2]=wk;
+}
+
+//山札表示
+new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=0};
+
+//配布中
+new Label{x:$screenWidth/2,y:55+310,size:30,fillStyle:"yellow",template:"$haihu"};
+
+//得点表示
+new Label{x:$screenWidth/2,y:55+100,size:30,fillStyle:"yellow",template:"親:$oyasum"};
+new Label{x:$screenWidth/2,y:55+180,size:30,fillStyle:"yellow",template:"子:$kosum"};
+
+//ボタン
+$onemore=new Button{top:400,width:200,height:40,left:20,fillStyle:"blue",text:"もう一枚引く"};
+$stop=new Button{top:400,width:200,height:40,left:240,fillStyle:"red",text:"引かない"};
+
+$kakezou=new Button{top:180,width:100,height:40,left:350,fillStyle:"red",text:"+"};
+$kakegen=new Button{top:240,width:100,height:40,left:350,fillStyle:"blue",text:"-"};
+
+//ここからループ
+while(1){
+//ゲームオーバー
+    if ($kake<1){
+        //破壊
+        all().die();
+        $frontLayer.all(Label).die();
+        $frontLayer.all(Button).die();
+        //緑
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_card1+55};
+        //メッセージ
+        new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,fillStyle:"black",template:"ゲームオーバー"};
+        $reset=new Button{top:$screenHeight/2-20+60,width:200,height:40,left:$screenWidth/2-100,fillStyle:"purple",text:"はじめから"};
+        $end=4;
+        //初期化
+        $score=100;
+        $kake=10;
+    }
+//掛け点調節
+    if ($kake>$score){//+
+        $kake=$score;
+    }
+    
+    if ($kakezou.clicked==1 && $itidash==2 && $kake<$score){//+
+        $kake+=1;
+    }
+    
+    if ($kakegen.clicked==1 && $itidash==2 && $kake>1){//-
+        $kake-=1;
+    }
+//カード配布中表示・非表示
+    if ($nowmoving==1){
+        $haihu="カード配布中";
+    }
+    
+    if ($nowmoving==0){
+        $haihu="";
+    }
+    
+//得点
+    //総和
+    if ($nowmoving==0){
+        $oyasum=($oya1+$oya2+$oya3)%10;
+        $kosum=($ko1+$ko2+$ko3)%10;
+    }
+    
+//初期カード
+    if ($nowmoving==0 && $order==1){//子
+        new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=1};
+    }
+    
+    if ($nowmoving==0 && $order==2){//親
+        new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=4};
+    }
+    
+//追加カード
+    if ($onemore.clicked==1 && $itidash<4 && $nowmoving==0 && $end<3){//子
+        new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=$itidash};
+        $itidash+=1;
+        $nowmoving=1;
+    }
+    
+    if (($stop.clicked==1 || $itidash>3) && $nowmoving==0){//親
+        if ($end==0  && $kosum>$oyasum){
+            new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=5};
+            $itidash=4;
+            $nowmoving=1;
+        }
+        
+        if ($end==1 && $nowmoving==0 && $kosum>$oyasum){
+            new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=6};
+        }
+        
+        //結果発表
+        if ($end!=4){
+            if ($kosum<$oyasum){
+                new Label{x:$screenWidth/2,y:55+140,size:30,fillStyle:"blue",template:"負け"};
+                $end=3;
+                $score-=$kake;
+            }
+        
+            if ($kosum==$oyasum){
+                new Label{x:$screenWidth/2,y:55+140,size:30,fillStyle:"yellow",template:"引き分け"};
+                $end=3;
+                $score-=($kake+($kake%2))/2;
+            }
+        
+            if ($kosum>$oyasum && $end==2){
+                new Label{x:$screenWidth/2,y:55+140,size:30,fillStyle:"red",template:"勝ち"};
+                $end=3;
+                $score+=$kake;
+            }
+        }
+        
+    }
+//終了後    
+    if ($end==3){
+        $reset=new Button{top:340,width:200,height:40,left:20,fillStyle:"purple",text:"もう一回やる"};
+        $end=4;
+    }
+    
+    if ($end==4){
+        if ($reset.clicked==1){//子
+        　　//破壊
+            all().die();
+            $frontLayer.all(Label).die();
+            $frontLayer.all(Button).die();
+            //ここからリセット
+            
+            //背景
+
+            //緑
+            new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_card1+55};
+            //黄緑
+            new Background{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};//山札
+
+            new Background{x:$screenWidth/2-40-10,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};//親
+            new Background{x:$screenWidth/2,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};
+            new Background{x:$screenWidth/2+40+10,y:55,scaleX:1,scaleY:1,p=$pat_card1+56};
+
+            new Background{x:$screenWidth/2-40-10,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};//子
+            new Background{x:$screenWidth/2,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};
+            new Background{x:$screenWidth/2+40+10,y:55+250,scaleX:1,scaleY:1,p=$pat_card1+56};
+
+            //初期値
+            $order=0;
+            $itidash=2;
+            $end=0;
+            $nowmoving=0;
+
+            $ko1=0;
+            $ko2=0;
+            $ko3=0;
+            $oya1=0;
+            $oya2=0;
+            $oya3=0;
+            
+            //スコア表示
+            new Label{x:$screenWidth/2+150,y:55+50,size:30,fillStyle:"black",template:"持ち点:$score"};
+            new Label{x:$screenWidth/2+150,y:55+90,size:30,fillStyle:"black",template:"掛け点:$kake"};
+
+            //配列
+            $trump=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29
+            ,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+
+            for (i=0; i<200; i++) {
+                r1=rnd(52);
+                r2=rnd(52);
+                wk=$trump[r1];
+                $trump[r1]=$trump[r2];
+                $trump[r2]=wk;
+            }
+
+            //山札表示
+            new Card{x:40,y:55,scaleX:1,scaleY:1,p=$pat_card1+54,iti=0};
+            
+            //配布中
+            new Label{x:$screenWidth/2,y:55+310,size:30,fillStyle:"yellow",template:"$haihu"};
+            
+                //得点表示
+            new Label{x:$screenWidth/2,y:55+100,size:30,fillStyle:"yellow",template:"親:$oyasum"};
+            new Label{x:$screenWidth/2,y:55+180,size:30,fillStyle:"yellow",template:"子:$kosum"};
+
+            //ボタン
+            $onemore=new Button{top:400,width:200,height:40,left:20,fillStyle:"blue",text:"もう一枚引く"};
+            $stop=new Button{top:400,width:200,height:40,left:240,fillStyle:"red",text:"引かない"};
+            
+            $kakezou=new Button{top:180,width:100,height:40,left:350,fillStyle:"red",text:"+"};
+            $kakegen=new Button{top:240,width:100,height:40,left:350,fillStyle:"blue",text:"-"};
+        }
+    }
+    
+update();}
+    
+
+
+
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697178537940' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697255354010' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "type": "wh",
+            "name": "$pat_card1",
+            "url": "ls:images/card1.png",
+            "pwidth": 40,
+            "pheight": 55
+        }
+    ],
+    "sounds": []
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/card1.png' data-wrap='80' data-lastupdate='1697101744612' >data:image/png;base64,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\
+cQAIARAwIAMNL3gPDw8HZlk72vytbX7tlwZdJT23BlkLFpKGPjqZa2de4+e8nW1O5TtrYkzg8IWTeuNh\
+0OL6vI1Jm9rwd179qVRfbz2+5Zu7Lo4fsjW2M59qnjZ+vNbLhX2fardAxbpr62sj6vINRNqie1yHSCs/\
+e1svX0oKfzm1EP+5exsRy/7Wn1sKdZTO1VkXm/5ppX5j0IcC92epIB+nR6QGgnqUxTVXmCy/wkl72vyj\
+gp96yX8w70Y8fB/v1cQcj+u6PsfRmVPWtXNtn7WrUvw+OvNrR7lqkPOHofA0LWJ5fSVVeRqa+XJ+TSVx\
+trcybZ+7Jq96yXxyJsbefvDe9BWFP94dE+GbJc+02RcQ+z92XWPvFlPrdtk3PLnZkfELJ/A1dtZ2aZ9j\
+D7nrWPOeKyne+pnvpxhu+Pqm3K1MX92enx1/cVhKknGoBbKc8t7YIt7fyY8xLDGjL/jqPtGnZmaR52wd\
+Y8Bq/X295l761Dwg6N5weErJtXm0z1l6m/E2pX1X7M++D7BE6r3xsZf87tbHpAaJ9U2lVk2MTsT3pTe5\
+W9OZPs++f8xvSwf72d40y92fduqq/tytA4NNW8gf7fgzC1MmhPaG3K+MDLKvv+Ob8xPexfb+c4U2/2vR\
+v21cai/fjO9TkglJN7amWRtWsoa1+7d/qu00Obxsucamlb5+6zlUwtU4Z97drbVMcObdMDwlzIDoEAwP\
+auv4Lwt79+v+YsuQ8AkM51A0L5gf/FV9+vqQFgyX3WNPXaUqu9fe4+azp37Pb2ufus6dyx29vn7rOmc8\
+dub5+7z5rOHbu9fe4+azp37Pb2ufus6dyx29vn7rOmc8dub5+7z5rOHbu9fe4+azp37Pb2ufus6dyx29\
+vn7rOmc8dub5+7zwKXDwj1B39rOAAsuc+ahhsy3KSpDQts4sX0xeiL0RejL0ZfzIZ9lw8Iwx/8Vfv1Jf\
+dZy7mNOHX7lZt4EX0x+mL0xeiL0Rezcd/170GYUgK22KRrZW4r9MXoi9EXoy9GX8wKfbcdEACAd8GAAA\
+CMXD4gfPvN6wdXiPy3S0X+noYt/o4HfTH6YvTF6IvRF7Nx3+UDwg++fP3gCpH/dm1bnNwIfTH6YvTF6I\
+vRF3Nl33UvMVxzsC030IMpRl+Mvhh9Mfpi9H3n+vcgXPJywRYvLQxdsol7PCD0xeiL0RejL0ZfzEZ91w\
+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
+</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
