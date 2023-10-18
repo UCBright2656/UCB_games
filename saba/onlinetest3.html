@@ -6,23 +6,16 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697630231319' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697634123448' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
 $pad.alpha = 0;
 new NetMng;
 new MyChar;
 
 $InputBox.open("Playername","","noname",0,0);
 
-while(1){
-    if ($InputBox.getStatus()==2){
-        $InputBox.open("Playername","","noname",0,0);
-    }
-    
-    $Myname=$InputBox.getText();
-}
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697630246474' >var playerNo, otime, latency;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697634152025' >var playerNo, otime, latency;
 
 while (true) {
     // 自分のキャラは薄く表示させる
@@ -41,7 +34,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697627400865' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697634134798' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -51,6 +44,14 @@ var ox = x;
 var oy = y;
 alpha = 255;
 while (true) {
+    
+    if ($InputBox.getStatus()==2){
+        $InputBox.open("Playername","","noname",0,0);
+    }
+    
+    $Myname=$InputBox.getText();
+
+
     if ($myNo != null) p = $pat_base+11; else p = $pat_base+11;
     if (getkey(37) || $pad.getLeft() ) x -= 3;
     if (getkey(38) || $pad.getUp()   ) y -= 3;
@@ -349,7 +350,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697630270152' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697634160688' >
 {
     "images": [
         {
