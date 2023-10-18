@@ -15,9 +15,18 @@ $InputBox.open("Playername","","noname",0,0);
 
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697634152025' >var playerNo, otime, latency;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697637386300' >var playerNo, otime, latency;
+
+var name, otime, latency;
+
 
 while (true) {
+    if ($InputBox.getStatus()==2){
+        $InputBox.open("Playername","","noname",0,0);
+    }
+    
+    name=$InputBox.getText();
+
     // 自分のキャラは薄く表示させる
     alpha = playerNo==$myNo ? 64 : 255;
     // 通信がしばらく来なかったら透明にする
@@ -26,7 +35,7 @@ while (true) {
         alpha = 0;
     } else {
         //drawText(x - 12, y + 24, (playerNo + 1) + "P", "rgb(255,255,255)", 16);
-        drawText(x - 12, y + 24, ($Myname) + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
+        drawText(x - 12, y + 24, (name) + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
         drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
     }
     otime ++;
@@ -34,7 +43,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697634134798' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697637117423' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -45,12 +54,6 @@ var oy = y;
 alpha = 255;
 while (true) {
     
-    if ($InputBox.getStatus()==2){
-        $InputBox.open("Playername","","noname",0,0);
-    }
-    
-    $Myname=$InputBox.getText();
-
 
     if ($myNo != null) p = $pat_base+11; else p = $pat_base+11;
     if (getkey(37) || $pad.getLeft() ) x -= 3;
@@ -79,7 +82,6 @@ while (true) {
             mes: "playerXY",
             time: performance.now(),
             playerNo: $myNo,
-            name:$Myname,
             x,
             y,
             latency: $latency
@@ -351,7 +353,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697634160688' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697637419338' >
 {
     "images": [
         {
