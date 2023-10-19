@@ -6,28 +6,17 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697685662150' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697706368342' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
 $pad.alpha = 0;
 new NetMng;
 new MyChar;
+$InputBox.open("Playernameを追加","","noname",0,0);</script>
 
-</script>
-
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697688728781' >var playerNo, otime, latency;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697706461761' >var playerNo, otime, latency;
 
 var name, otime, latency;
 
-$InputBox.open("Playername","","noname",0,0);
-
-
 while (true) {
-    if ($InputBox.getStatus()==2){
-        $InputBox.open("Playername","","noname",0,0);
-    }
-    
-    name=$InputBox.getText();
-
-
     // 自分のキャラは薄く表示させる
     alpha = playerNo==$myNo ? 64 : 255;
     // 通信がしばらく来なかったら透明にする
@@ -35,8 +24,8 @@ while (true) {
     if (otime >= 60*30) {
         alpha = 0;
     } else {
-        //drawText(x - 12, y + 24, (playerNo + 1) + "P", "rgb(255,255,255)", 16);
-        drawText(x - 12, y + 24, (name) + "P", "rgb(255,255,255)", 16);
+        drawText(x - 12, y + 24, (playerNo + 1) + "P", "rgb(255,255,255)", 16);
+        //drawText(x - 12, y + 24, (name) + "P", "rgb(255,255,255)", 16);
         drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
     }
     otime ++;
@@ -44,7 +33,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697688641606' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697702833724' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -54,7 +43,14 @@ var ox = x;
 var oy = y;
 alpha = 255;
 
+var a;
+a=0;
 while (true) {
+
+    if ($myNo == 0 && a==0) {
+        a=1;
+        new Saver;
+    }
 
     if ($myNo != null) p = $pat_base+11; else p = $pat_base+11;
     if (getkey(37) || $pad.getLeft() ) x -= 3;
@@ -199,6 +195,57 @@ while (true) {
 }
 </script>
 
+<script language='text/tonyu' type='text/tonyu' data-filename='Saver.tonyu' data-lastupdate='1697706366087' >var s;
+var i;
+var st;
+var douituhantei;
+s=0;
+st=0;
+douituhantei=0;
+$save=new Array();
+$save[0]="a";
+$save[1]="b";
+$save[2]="c";
+//$save.push($InputBox.getText());
+while (true) {
+    s=$save.length;
+    
+    if ($InputBox.getStatus()==0){
+        st=0;
+    }
+    
+    if ($InputBox.getStatus()==2){
+        $InputBox.open("Playernameを追加","","noname",0,0);
+    }
+    
+    //登録システム
+    if ($InputBox.getStatus()==1 && st==0){
+        st=1;
+        for (i=0; i<s; i++) {
+            if ($save[i]==(($InputBox.getText()))){
+                douituhantei=1;
+            }
+        }
+        if (douituhantei==0){
+            $save[s]=($InputBox.getText());
+        }
+        douituhantei=0;
+    }
+    //ここまで登録システム
+    
+    if(getkey("space")==1){
+        print("$save:"+$save);
+        print("s:"+s);
+        
+    }
+    
+    if(getkey("R")==1){
+        $InputBox.open("Playernameを追加","","noname",0,0);
+    }
+    update();
+}
+</script>
+
 <script language='text/tonyu' type='text/tonyu' data-filename='T2WebSocket.tonyu' data-lastupdate='1697550355409' >// T2WebSocket 1.1.0
 // Tonyu2でWebSocketを使うためのライブラリ
 
@@ -319,7 +366,7 @@ var onMessage = null;
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697630267943' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697704789104' >
 {
     "compiler": {
         "namespace": "user",
@@ -354,7 +401,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697688756782' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697706467086' >
 {
     "images": [
         {
