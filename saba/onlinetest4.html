@@ -6,14 +6,17 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697718761809' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697759252179' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
 $pad.alpha = 0;
 new NetMng;
 new MyChar;
 new Label{x:$screenWidth-120,y:55+30,size:20,fillStyle:"yellow",template:"Nで名前変更、Tで呟く"};
-new Label{x:$screenWidth-120,y:55+50,size:20,fillStyle:"yellow",template:"×ボタン押すとバグる"};</script>
+new Label{x:$screenWidth-120,y:55+50,size:20,fillStyle:"yellow",template:"×ボタン押すとバグる"};
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697718514225' >var playerNo, otime, latency,name,chat,content;
+$nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"名前変更"};
+$tbutton=new Button{top:55+130,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"呟く"};</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697759252184' >var playerNo, otime, latency,name,chat,content;
 
 while (true) {
     // 自分のキャラは薄く表示させる
@@ -37,7 +40,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697718429857' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697759252190' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -60,7 +63,7 @@ while (true) {
     if ($InputBox.getStatus()==2 && gonow==1){
         gonow=0;
     }
-    if(getkey("N")==1  && gonow==0){
+    if($nbutton.clicked==1 && gonow==0){
         gonow=1;
         $InputBox.open("Playernameを変更","","noname",0,0);
     }
@@ -74,7 +77,7 @@ while (true) {
     if ($InputBox.getStatus()==2 && gonow==2){
         gonow=0;
     }
-    if(getkey("T")==1 && gonow==0){
+    if($tbutton.clicked==1 && gonow==0){
         gonow=2;
         $InputBox.open("呟く","","",500,0);
     }
@@ -120,7 +123,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697715784798' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697759252195' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -234,7 +237,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Saver.tonyu' data-lastupdate='1697706366087' >var s;
+<script language='text/tonyu' type='text/tonyu' data-filename='Saver.tonyu' data-lastupdate='1697759252208' >var s;
 var i;
 var st;
 var douituhantei;
@@ -285,7 +288,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='T2WebSocket.tonyu' data-lastupdate='1697550355409' >// T2WebSocket 1.1.0
+<script language='text/tonyu' type='text/tonyu' data-filename='T2WebSocket.tonyu' data-lastupdate='1697759252212' >// T2WebSocket 1.1.0
 // Tonyu2でWebSocketを使うためのライブラリ
 
 extends null;
@@ -405,7 +408,7 @@ var onMessage = null;
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697704789104' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697759252200' >
 {
     "compiler": {
         "namespace": "user",
@@ -440,7 +443,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697718772510' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697759272602' >
 {
     "images": [
         {
