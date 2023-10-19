@@ -12,7 +12,7 @@ new NetMng;
 new MyChar;
 //$InputBox.open("Playernameを追加","","noname",0,0);</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697712956596' >var playerNo, otime, latency,latency2;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697713245831' >var playerNo, otime, latency,name;
 
 while (true) {
     // 自分のキャラは薄く表示させる
@@ -24,14 +24,14 @@ while (true) {
     } else {
         drawText(x - 12, y + 24, (playerNo + 1) + "P", "rgb(255,255,255)", 16);
         drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
-        drawText(x - 12, y + 24 + 30, latency2, "rgb(255,255,255)", 16);
+        drawText(x - 12, y + 24 + 30, name, "rgb(255,255,255)", 16);
     }
     otime ++;
     update();
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697712936955' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697713515609' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -40,11 +40,11 @@ y = rnd($screenHeight);
 var ox = x;
 var oy = y;
 alpha = 255;
-
+$InputBox.open("Playernameを追加","","noname",0,0);
 //new Saver{x=15, y=20,p=11};
 while (true) {
-    if(getkey("Q")==1){
-        $latency2+=1;
+    if ($InputBox.getStatus()==1){
+        $name=$InputBox.getText();
     }
     
     if ($myNo != null) p = $pat_base+11; else p = $pat_base+11;
@@ -77,7 +77,7 @@ while (true) {
             x,
             y,
             latency: $latency,
-            latency2: $latency2
+            name: $name
         });
         
     }
@@ -85,7 +85,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697712810499' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697713291029' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -93,7 +93,7 @@ native clearInterval;
 $onlineOpen = false;
 $mirrorAry = [];
 $latency = 0;
-$latency2 = 0;
+$name = 0;
 $latencyMin = 30000; $latencyMinTime = performance.now();
 $latencyMax = 0; $latencyMaxTime = performance.now();
 
@@ -167,7 +167,7 @@ $t2ws.setOnMessageListener(\(obj) {
         m.y = obj.y;
         m.otime = 0;
         m.latency = obj.latency;
-        m.latency2 = obj.latency2;
+        m.name = obj.name;
         if (playerNo == $myNo) { // 自分が送信したデータも帰ってくるので、それで通信ラグを計算
             var l = floor(performance.now() - obj.time);
             if (l >= 0){
@@ -401,7 +401,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697712967465' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697713520906' >
 {
     "images": [
         {
