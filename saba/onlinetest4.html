@@ -6,13 +6,14 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697709511380' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697718761809' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
 $pad.alpha = 0;
 new NetMng;
 new MyChar;
-//$InputBox.open("Playernameを追加","","noname",0,0);</script>
+new Label{x:$screenWidth-120,y:55+30,size:20,fillStyle:"yellow",template:"Nで名前変更、Tで呟く"};
+new Label{x:$screenWidth-120,y:55+50,size:20,fillStyle:"yellow",template:"×ボタン押すとバグる"};</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697715559898' >var playerNo, otime, latency,name,chat;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697718514225' >var playerNo, otime, latency,name,chat,content;
 
 while (true) {
     // 自分のキャラは薄く表示させる
@@ -26,7 +27,7 @@ while (true) {
         drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
         //drawText(x - 12, y + 24 + 30, chat, "rgb(255,255,255)", 16);
         if (chat==1){
-            print(name+":"+(playerNo+1));
+            print(name+"("+(playerNo + 1)+"P):"+(content));
             chat=0;
             $chat=0;
         }
@@ -36,7 +37,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697715321140' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697718429857' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -45,18 +46,37 @@ y = rnd($screenHeight);
 var ox = x;
 var oy = y;
 alpha = 255;
-$InputBox.open("Playernameを変更","","noname",0,0);
-//new Saver{x=15, y=20,p=11};
+
+var gonow;
+gonow=0;
+//$InputBox.open("Playernameを変更","","noname",0,0);
+//$InputBox.open("呟く","","",100,0);
 while (true) {
-    if ($InputBox.getStatus()==1){
+    //playername
+    if ($InputBox.getStatus()==1 && gonow==1){
+        gonow=0;
         $name=$InputBox.getText();
     }
-    if(getkey("space")==1){
+    if ($InputBox.getStatus()==2 && gonow==1){
+        gonow=0;
+    }
+    if(getkey("N")==1  && gonow==0){
+        gonow=1;
         $InputBox.open("Playernameを変更","","noname",0,0);
     }
-    
-    if(getkey("enter")==1){
+
+    //content
+    if ($InputBox.getStatus()==1 && gonow==2){
+        gonow=0;
+        $content=$InputBox.getText();
         $chat=1;
+    }
+    if ($InputBox.getStatus()==2 && gonow==2){
+        gonow=0;
+    }
+    if(getkey("T")==1 && gonow==0){
+        gonow=2;
+        $InputBox.open("呟く","","",500,0);
     }
 
     
@@ -91,7 +111,8 @@ while (true) {
             y,
             latency: $latency,
             name: $name,
-            chat: $chat
+            chat: $chat,
+            content:$content
         });
         
     }
@@ -99,7 +120,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697715021976' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697715784798' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -109,6 +130,7 @@ $mirrorAry = [];
 $latency = 0;
 $name = "noname";
 $chat = 0;
+$content = "";
 $latencyMin = 30000; $latencyMinTime = performance.now();
 $latencyMax = 0; $latencyMaxTime = performance.now();
 
@@ -184,6 +206,7 @@ $t2ws.setOnMessageListener(\(obj) {
         m.latency = obj.latency;
         m.name = obj.name;
         m.chat = obj.chat;
+        m.content = obj.content;
         if (playerNo == $myNo) { // 自分が送信したデータも帰ってくるので、それで通信ラグを計算
             var l = floor(performance.now() - obj.time);
             if (l >= 0){
@@ -417,7 +440,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697715570227' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697718772510' >
 {
     "images": [
         {
