@@ -6,15 +6,13 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697706368342' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1697709511380' >$pad = new Pad{buttonCnt:0, alpha:255, active:false};
 $pad.alpha = 0;
 new NetMng;
 new MyChar;
-$InputBox.open("Playernameを追加","","noname",0,0);</script>
+//$InputBox.open("Playernameを追加","","noname",0,0);</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697706461761' >var playerNo, otime, latency;
-
-var name, otime, latency;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697712956596' >var playerNo, otime, latency,latency2;
 
 while (true) {
     // 自分のキャラは薄く表示させる
@@ -25,15 +23,15 @@ while (true) {
         alpha = 0;
     } else {
         drawText(x - 12, y + 24, (playerNo + 1) + "P", "rgb(255,255,255)", 16);
-        //drawText(x - 12, y + 24, (name) + "P", "rgb(255,255,255)", 16);
         drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
+        drawText(x - 12, y + 24 + 30, latency2, "rgb(255,255,255)", 16);
     }
     otime ++;
     update();
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697702833724' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697712936955' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -43,10 +41,12 @@ var ox = x;
 var oy = y;
 alpha = 255;
 
-var a;
-a=0;
-    new Saver{x=15, y=20,p=11};
+//new Saver{x=15, y=20,p=11};
 while (true) {
+    if(getkey("Q")==1){
+        $latency2+=1;
+    }
+    
     if ($myNo != null) p = $pat_base+11; else p = $pat_base+11;
     if (getkey(37) || $pad.getLeft() ) x -= 3;
     if (getkey(38) || $pad.getUp()   ) y -= 3;
@@ -76,7 +76,8 @@ while (true) {
             playerNo: $myNo,
             x,
             y,
-            latency: $latency
+            latency: $latency,
+            latency2: $latency2
         });
         
     }
@@ -84,7 +85,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697686133392' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697712810499' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -92,6 +93,7 @@ native clearInterval;
 $onlineOpen = false;
 $mirrorAry = [];
 $latency = 0;
+$latency2 = 0;
 $latencyMin = 30000; $latencyMinTime = performance.now();
 $latencyMax = 0; $latencyMaxTime = performance.now();
 
@@ -165,9 +167,12 @@ $t2ws.setOnMessageListener(\(obj) {
         m.y = obj.y;
         m.otime = 0;
         m.latency = obj.latency;
+        m.latency2 = obj.latency2;
         if (playerNo == $myNo) { // 自分が送信したデータも帰ってくるので、それで通信ラグを計算
             var l = floor(performance.now() - obj.time);
-            if (l >= 0) $latency = floor(performance.now() - obj.time);
+            if (l >= 0){
+                $latency = floor(performance.now() - obj.time);
+            }
         }
     }
 });
@@ -396,7 +401,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697706467086' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697712967465' >
 {
     "images": [
         {
