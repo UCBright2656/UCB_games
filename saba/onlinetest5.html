@@ -137,7 +137,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697789438939' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697792285927' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -196,13 +196,13 @@ $t2ws.setOnMessageListener(\(obj) {
     
     if (obj.mes == "_start") { // 通信開始時の情報
         $myNo = obj.playerNo;
-        print("myNo:" + ($myNo + 1) + "P");
+        print("myName:" +$name +"(" + ($myNo + 1) + "P)");
         
     } else if (obj.mes == "_connection") { // 自分または誰かが、接続した（自分より先に接続した人は通知されない）
-        print("connect:", (obj.playerNo + 1) + "P");
+        print("connect:", $name +"("+(obj.playerNo + 1) + "P)");
         
     } else if (obj.mes == "_close") { // 自分または誰かが、切断・タイムアウトした（自分より後に切断した人は通知されない）
-        print("close:", (obj.playerNo + 1) + "P");
+        print("close:", $name +"("+(obj.playerNo + 1) + "P)");
         var m = $mirrorAry[obj.playerNo];
         if (m) { // 切断したら該当キャラをすぐ暗くする
             m.otime = 60 * 25;
@@ -213,7 +213,7 @@ $t2ws.setOnMessageListener(\(obj) {
         if (playerNo == null) return;
         var m = $mirrorAry[playerNo];
         if (!m) {
-            print("exists:", (playerNo + 1) + "P");
+            print("exists:", $name +"("+(playerNo + 1) + "P)");
             m = new Mirror{playerNo, x:-999, y:-999, p:playerNo, zOrder:10, otime:0};
             $mirrorAry[playerNo] = m;
         }
@@ -457,7 +457,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697791801434' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697792308230' >
 {
     "images": [
         {
