@@ -28,11 +28,12 @@ if ($nameFile.exists()) {
 
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697759252184' >var playerNo, otime, latency,name,chat,content;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697792851862' >var playerNo, otime, latency,name,chat,content;
 
 while (true) {
     // 自分のキャラは薄く表示させる
     alpha = playerNo==$myNo ? 64 : 255;
+    if (playerNo==$myNo)p=$pat_mapchip+92;
     // 通信がしばらく来なかったら透明にする
     if (otime >= 60*20) alpha *= (60 * 30 - otime) / (60 * 10);
     if (otime >= 60*30) {
@@ -52,7 +53,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697791756769' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1697792773307' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -104,7 +105,7 @@ while (true) {
     if (getkey(40) || $pad.getDown() ) y += 3;
     // 画面外から出ないよう制御
     x = clamp(16, $screenWidth - 16, x);
-    y = clamp(16, $screenHeight - 54, y);
+    y = clamp(16, $screenHeight - 16, y); //-54だった
     // 移動 or 0.3秒たったらデータを送信。
     // ただしラグが大きいときは送信頻度を減らす（送信データが待ちで溜まっていく場合があるのでその防止策）
     if (
@@ -457,7 +458,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697792308230' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697792861045' >
 {
     "images": [
         {
@@ -478,7 +479,8 @@ var onMessage = null;
             "name": "$pat_mapchip",
             "url": "images/mapchip.png",
             "pwidth": 32,
-            "pheight": 32
+            "pheight": 32,
+            "type": "wh"
         }
     ],
     "sounds": []
