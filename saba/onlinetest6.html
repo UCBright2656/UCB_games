@@ -16,7 +16,7 @@ new NetMng;
 new MyChar;
 
 $nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"名前変更"};
-$tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"呟く"};//画面外
+$tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"呟く"};
 $sbutton=new Button{top:55+70+60*2,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"スキン"};
 $2button=new Button{top:55+70+60*3,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"トーク"};
 
@@ -42,7 +42,7 @@ if ($skinFile.exists()) {
 while(1){
     //2
     if($2button.clicked==1){
-        loadPage(Secondpage);
+        //loadPage(Secondpage);
     }
 update();}</script>
 
