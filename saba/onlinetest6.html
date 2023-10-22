@@ -63,7 +63,13 @@ while(1){
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697938593656' >var playerNo, otime, latency,name,chat,content,skin;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697939635537' >var playerNo, otime, latency,name,chat,content,skin;
+
+$messagekind=2;
+$messagenew=1;
+$viewname=name;
+new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+        
 while (true) {
     zOrder=-1;
     p=skin;
@@ -88,6 +94,7 @@ while (true) {
             chat=0;
             $chat=0;
         }
+        
     }
     otime ++;
     update();
@@ -198,7 +205,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697939020327' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697939555966' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -261,10 +268,7 @@ $t2ws.setOnMessageListener(\(obj) {
         
     } else if (obj.mes == "_connection") { // 自分または誰かが、接続した（自分より先に接続した人は通知されない）
         //print("connect:",(obj.playerNo + 1) + "P");
-        $messagekind=2;
-        $messagenew=1;
-        $viewname=$name;
-        new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+        
         
     } else if (obj.mes == "_close") { // 自分または誰かが、切断・タイムアウトした（自分より後に切断した人は通知されない）
         //print("close:", (obj.playerNo + 1) + "P");
@@ -565,7 +569,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697939025432' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697939665563' >
 {
     "images": [
         {
