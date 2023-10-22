@@ -62,7 +62,7 @@ while(1){
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697942296314' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697942685631' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -70,7 +70,8 @@ $viewname=name;
 new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
         
 while (true) {
-    if (nowpage!=$nowpage)die();
+    p=$pat_mapchip+71;
+    if (nowpage!=$nowpage)break;
     
     zOrder=-1;
     p=skin;
@@ -586,7 +587,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697942400380' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1697942690241' >
 {
     "images": [
         {
