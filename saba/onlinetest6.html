@@ -62,7 +62,7 @@ while(1){
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1697943127629' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698028236928' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -70,33 +70,34 @@ $viewname=name;
 new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
         
 while (true) {
-    if (nowpage!=$nowpage)die();
+    if (nowpage==$nowpage){
 
-    zOrder=-1;
-    p=skin;
+        zOrder=-1;
+        p=skin;
     // 自分のキャラは薄く表示させる
-    alpha = playerNo==$myNo ? 64 : 255;
-    if (playerNo==$myNo)p=$pat_mapchip+92;
+        alpha = playerNo==$myNo ? 64 : 255;
+        if (playerNo==$myNo)p=$pat_mapchip+92;
     // 通信がしばらく来なかったら透明にする
-    if (otime >= 60*20) alpha *= (60 * 30 - otime) / (60 * 10);
-    if (otime >= 60*30) {
-        alpha = 0;
-    } else {
-        drawText(x - 12, y + 24, name + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
-        drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
-        drawText(x - 12, y + 24 + 15*2, $nowpage, 12);
+        if (otime >= 60*20) alpha *= (60 * 30 - otime) / (60 * 10);
+        if (otime >= 60*30) {
+            alpha = 0;
+        } else {
+            drawText(x - 12, y + 24, name + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
+            drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
+            drawText(x - 12, y + 24 + 15*2, $nowpage, 12);
         //drawText(x - 12, y + 24 + 30, chat, "rgb(255,255,255)", 16);
-        if (chat==1){
-            $messagekind=1;
-            $messagenew=1;
-            $viewname=name;
-            $viewplayerNo=playerNo;
-            $viewcontent=content;
-            new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
-            chat=0;
-            $chat=0;
-        }
+            if (chat==1){
+                $messagekind=1;
+                $messagenew=1;
+                $viewname=name;
+                $viewplayerNo=playerNo;
+                $viewcontent=content;
+                new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+                chat=0;
+                $chat=0;
+            }
         
+        }
     }
     otime ++;
     update();
@@ -586,7 +587,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698028149386' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698028436505' >
 {
     "images": [
         {
