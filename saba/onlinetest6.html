@@ -77,7 +77,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698030582437' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698032180956' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -129,7 +129,6 @@ while (true) {
                 chat=0;
                 $chat=0;
             }
-        
         }
     }
     
@@ -141,7 +140,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698030570512' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698032307169' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -155,27 +154,28 @@ var oy = y;
 alpha = 255;
 
 $gonow=0;
-//$nowpage=0;
+
 while (true) {
     zOrder=-2;
     p=$skin;
     
-    //totalk
-    if($2button.clicked==1){
-        
+    if ($nowpagebefore!=0){
+        $nowpage=$nowpagebefore;
+        $nowpagebefore=0;
         $frontLayer.all(Label).die();
-        $chat=4;
-        $nowpage=1;
         $chat=3;
     }
     
     //tomain
     if($mbutton.clicked==1){
-        
-        $frontLayer.all(Label).die();
+        $nowpagebefore=1;
         $chat=4;
-        $nowpage=0;
-        $chat=3;
+    }
+    
+    //totalk
+    if($2button.clicked==1){
+        $nowpagebefore=2;
+        $chat=4;
     }
     
     //name
@@ -256,7 +256,7 @@ while (true) {
             skin:$skin,
             chat: $chat,
             content:$content,
-            nowpage:$nowpage
+            nowpage:$nowpage,
         });
         
     }
@@ -264,7 +264,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1697942264984' >native window;
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1698031787473' >native window;
 native performance;
 native setInterval;
 native clearInterval;
@@ -588,7 +588,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698030605299' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698032334237' >
 {
     "images": [
         {
