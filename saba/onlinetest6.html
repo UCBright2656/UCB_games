@@ -140,7 +140,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698032532397' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698032747752' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -154,14 +154,14 @@ var oy = y;
 alpha = 255;
 
 $gonow=0;
-$nowpagebefore=0;
+$nowpagebefore=-1;
 while (true) {
     zOrder=-2;
     p=$skin;
     
-    if ($nowpagebefore!=0){
+    if ($nowpagebefore!=-1){
         $nowpage=$nowpagebefore;
-        $nowpagebefore=0;
+        $nowpagebefore=-1;
         $frontLayer.all(Label).die();
         $chat=3;//enterを送信
     }
@@ -588,7 +588,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698032334237' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698032772169' >
 {
     "images": [
         {
