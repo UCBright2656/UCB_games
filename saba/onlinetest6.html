@@ -105,7 +105,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698035281877' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698060127367' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -164,7 +164,7 @@ while (true) {
         alpha=0;
     }
     
-    if (nowpage!=$nowpage && nowpage==-1){//存在しないが、leftを送信可能
+    if (nowpage!=$nowpage && nowpage==-1 && nowpage==$oldpage){//存在しないが、leftを送信可能
         alpha=0;
         
         if (chat==4){//roomからleftしたことを伝える
@@ -181,7 +181,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698034797406' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698060184220' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -202,6 +202,7 @@ while (true) {
     //toportal
     if($pbutton.clicked==1){
         $pagechange=1;
+        $oldpage=$nowpage;
         $nowpage=-1;
         $chat=4;//enterを送信
     }
@@ -630,7 +631,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698035309342' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698060206816' >
 {
     "images": [
         {
