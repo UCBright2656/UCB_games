@@ -53,7 +53,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1697938762032' >extends Label;//Labelクラスを継承
+<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1698029978499' >extends Label;//Labelクラスを継承
 if ($messagekind==1){
     text=$viewname+":"+$viewcontent;
 }
@@ -61,16 +61,19 @@ if ($messagekind==1){
 if ($messagekind==2){
     text="connect:"+$viewname;
 }
+
+if ($messagekind==3){
+    text="enter:"+$viewname;
+}
 while(1){
-    if ($messagenew==1){
+    if ($messagenew==1 || $messagenew==3){
         y=y-25;
         update();
         $messagenew=0;
     }
-
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698029252973' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698029964694' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -93,13 +96,22 @@ while (true) {
             drawText(x - 12, y + 24, name + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
             drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
             drawText(x - 12, y + 24 + 15*2, $nowpage, 12);
-        //drawText(x - 12, y + 24 + 30, chat, "rgb(255,255,255)", 16);
-            if (chat==1){
+
+            if (chat==1){//contentの内容をchatする
                 $messagekind=1;
                 $messagenew=1;
                 $viewname=name;
                 $viewplayerNo=playerNo;
                 $viewcontent=content;
+                new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+                chat=0;
+                $chat=0;
+            }
+            
+            if (chat==3){//roomにenterしたことを伝える
+                $messagekind=3;
+                $messagenew=1;
+                $viewname=name;
                 new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
                 chat=0;
                 $chat=0;
@@ -116,7 +128,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698029279164' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698029782569' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -137,14 +149,16 @@ while (true) {
     
     //totalk
     if($2button.clicked==1){
-        //loadPage(Secondpage);
+        $frontLayer.all(Label).die();
         $nowpage=1;
+        $chat=3;
     }
     
     //tomain
     if($mbutton.clicked==1){
-        //loadPage(Main);
+        $frontLayer.all(Label).die();
         $nowpage=0;
+        $chat=3;
     }
     
     //name
@@ -402,44 +416,6 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Secondpage.tonyu' data-lastupdate='1698029135164' >$nowpage=1;
-new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+95};
-
-$pad = new Pad{buttonCnt:0, alpha:255, active:false};
-$pad.alpha = 0;
-new NetMng;
-update(); //limitboot対策
-new MyChar;
-
-$nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"名前変更"};//画面外
-$tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"呟く"};
-$sbutton=new Button{top:55+70+60*2,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"スキン"};//画面外
-$mbutton=new Button{top:55+70+60*3,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"メイン"};
-$2button=new Button{top:55+70+60*4,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"トーク"};//画面外
-
-//name
-$nameFile=file("name.json");
-
-if ($nameFile.exists()) {
-    $name=$nameFile.obj();
-} else {
-    $name=["noname"];
-}
-
-//skin
-$skinFile=file("skin.json");
-
-if ($skinFile.exists()) {
-    $skin=$skinFile.obj();
-} else {
-    $skin=[$pat_neko+0];
-}
-
-while(1){
-
-update();}
-</script>
-
 <script language='text/tonyu' type='text/tonyu' data-filename='T2WebSocket.tonyu' data-lastupdate='1697759252212' >// T2WebSocket 1.1.0
 // Tonyu2でWebSocketを使うためのライブラリ
 
@@ -595,7 +571,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698029299877' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698029998072' >
 {
     "images": [
         {
