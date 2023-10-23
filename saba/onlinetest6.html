@@ -81,7 +81,7 @@ while(1){
     
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1698030327127' >extends Label;//Labelクラスを継承
+<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1698061944784' >extends Label;//Labelクラスを継承
 if ($messagekind==1){
     text=$viewname+":"+$viewcontent;
 }
@@ -96,6 +96,9 @@ if ($messagekind==3){
 
 if ($messagekind==4){
     text="left:"+$viewname;
+    if ($toportal==1){
+        $toportal=2;
+    }
 }
 while(1){
     if ($messagenew==1 || $messagenew==3 || $messagenew==4){
@@ -105,7 +108,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698060593244' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698061846141' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
 
 $messagekind=2;
 $messagenew=1;
@@ -168,10 +171,10 @@ while (true) {
         alpha=0;
         
         if (chat==4){//roomからleftしたことを伝える
-            $messagekind=4;
-            $messagenew=1;
-            $viewname=name;
-            new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+            //$messagekind=4;
+            //$messagenew=1;
+            //$viewname=name;
+            //new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
             chat=0;
             $chat=0;
         }
@@ -181,7 +184,7 @@ while (true) {
 }
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698060631390' >native JSON;
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698062045010' >native JSON;
 native performance;
 
 var otime = $frameCount - 60 * 5 + 30;
@@ -201,9 +204,16 @@ while (true) {
     
     //toportal
     if($pbutton.clicked==1){
+        //$pagechange=1;
+        $toportal=1;
+        //$nowpage=-1;
+        $chat=4;//enterを送信
+    }
+    
+    if ($toportal==2){
         $pagechange=1;
         $nowpage=-1;
-        $chat=4;//enterを送信
+        $toportal=0;
     }
     
     //tomain
@@ -630,7 +640,7 @@ var onMessage = null;
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698060633757' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698062074096' >
 {
     "images": [
         {
