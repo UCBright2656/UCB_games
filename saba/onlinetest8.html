@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Background.tonyu' data-lastupdate='1697800869655' ></script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1698102791196' >$nowpage=0;
+$pagechange=1;
+
+$pad = new Pad{buttonCnt:0, alpha:255, active:false};
+$pad.alpha = 0;
+new NetMng;
+update(); //limitboot対策
+new MyChar;
+
+//name
+$nameFile=file("name.json");
+
+if ($nameFile.exists()) {
+    $name=$nameFile.obj();
+} else {
+    $name=["noname"];
+}
+
+//skin
+$skinFile=file("skin.json");
+
+if ($skinFile.exists()) {
+    $skin=$skinFile.obj();
+} else {
+    $skin=[$pat_neko+0];
+}
+
+while(1){
+    
+    if ($nowpage==-1 && $pagechange==1){//portal
+        all(Background).die();
+        $frontLayer.all(Label).die();
+        $frontLayer.all(Button).die();
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+94};
+        $nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"名前変更"};
+        $tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"呟く"};//画面外
+        $sbutton=new Button{top:55+70+60*2,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"スキン"};
+        $pbutton=new Button{top:55+70+60*3,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"ポータル"};//画面外
+        $rbutton=new Button{top:55+70+60*4,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"部屋選択"};
+        $pagechange=0;
+    }
+    
+    if ($nowpage==0 && $pagechange==1){//main
+        all(Background).die();
+        $frontLayer.all(Label).die();
+        $frontLayer.all(Button).die();
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48};
+        $nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"名前変更"};
+        $tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"呟く"};
+        $sbutton=new Button{top:55+70+60*2,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"スキン"};
+        $pbutton=new Button{top:55+70+60*3,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"ポータル"};
+        $rbutton=new Button{top:55+70+60*4,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"部屋選択"};//画面外
+        $pagechange=0;
+    }
+    
+    if ($nowpage>=1 && $pagechange==1){//talk
+        all(Background).die();
+        $frontLayer.all(Label).die();
+        $frontLayer.all(Button).die();
+        new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48};
+        $nbutton=new Button{top:55+70,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"名前変更"};
+        $tbutton=new Button{top:55+70+60,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"呟く"};
+        $sbutton=new Button{top:55+70+60*2,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"スキン"};
+        $pbutton=new Button{top:55+70+60*3,width:120,height:40,left:$screenWidth-140,fillStyle:"green",text:"ポータル"};
+        $rbutton=new Button{top:55+70+60*4,width:120,height:40,left:$screenWidth-140+100000,fillStyle:"green",text:"部屋選択"};//画面外
+        $pagechange=0;
+    }
+    
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1698061944784' >extends Label;//Labelクラスを継承
+if ($messagekind==1){
+    text=$viewname+":"+$viewcontent;
+}
+
+if ($messagekind==2){
+    text="connect:"+$viewname;
+}
+
+if ($messagekind==3){
+    text="enter:"+$viewname;
+}
+
+if ($messagekind==4){
+    text="left:"+$viewname;
+    if ($toportal==1){
+        $toportal=2;
+    }
+}
+while(1){
+    if ($messagenew==1 || $messagenew==3 || $messagenew==4){
+        y=y-25;
+        update();
+        $messagenew=0;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mirror.tonyu' data-lastupdate='1698102912926' >var playerNo, otime, latency,name,chat,content,skin,nowpage;
+
+$messagekind=2;
+$messagenew=1;
+$viewname=name;
+new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+
+while (true) {
+    if (nowpage==$nowpage){//存在する
+
+        zOrder=-1;
+        p=skin;
+    // 自分のキャラは薄く表示させる
+        alpha = playerNo==$myNo ? 64 : 255;
+        if (playerNo==$myNo)p=$pat_mapchip+92;
+    // 通信がしばらく来なかったら透明にする
+        if (otime >= 60*20) alpha *= (60 * 30 - otime) / (60 * 10);
+        if (otime >= 60*30) {
+            alpha = 0;
+        } else {
+            drawText(x - 12, y + 24, name + "(" + (playerNo + 1) + "P)", "rgb(255,255,255)", 16);
+            drawText(x - 12, y + 24 + 15, latency + "ms", "rgb(255,255,255)", 12);
+            drawText(x - 12, y + 24 + 15*2, "部屋番号:"+$nowpage,"rgb(255,255,255)", 16);
+
+            if (chat==1){//contentの内容をchatする
+                $messagekind=1;
+                $messagenew=1;
+                $viewname=name;
+                $viewplayerNo=playerNo;
+                $viewcontent=content;
+                new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+                chat=0;
+                $chat=0;
+            }
+            
+            if (chat==3){//roomにenterしたことを伝える
+                $messagekind=3;
+                $messagenew=1;
+                $viewname=name;
+                new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+                chat=0;
+                $chat=0;
+            }
+            
+            if (chat==4){//roomからleftしたことを伝える
+                $messagekind=4;
+                $messagenew=1;
+                $viewname=name;
+                new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+                chat=0;
+                $chat=0;
+            }
+        }
+    }
+    
+    if (nowpage!=$nowpage && nowpage!=-1){//存在しない
+        alpha=0;
+    }
+    
+    if (nowpage!=$nowpage && nowpage==-1){//存在しないが、leftを送信可能
+        alpha=0;
+        
+        if (chat==4){//roomからleftしたことを伝える
+            //$messagekind=4;
+            //$messagenew=1;
+            //$viewname=name;
+            //new Message{x:0,y:$screenHeight,size:20,fillStyle:"yellow",align:"left"};
+            chat=0;
+            $chat=0;
+        }
+    }
+    otime ++;
+    update();
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='MyChar.tonyu' data-lastupdate='1698724941559' >native JSON;
+native performance;
+
+var otime = $frameCount - 60 * 5 + 30;
+//x = rnd($screenWidth);
+//y = rnd($screenHeight);
+x=$screenWidth/2;
+y=$screenHeight/2;
+
+var ox = x;
+var oy = y;
+alpha = 255;
+
+$gonow=0;
+while (true) {
+    zOrder=-2;
+    p=$skin;
+    
+    //toportal
+    if($pbutton.clicked==1){
+        $toportal=1;
+        $chat=4;//enterを送信
+    }
+    
+    if ($toportal==2){
+        $pagechange=1;
+        $nowpage=-1;
+        $toportal=0;
+    }
+    /*
+    //tomain
+    if($mbutton.clicked==1){
+        $pagechange=1;
+        $nowpage=0;
+        $chat=3;//enterを送信
+    }
+    
+    //totalk
+    if($2button.clicked==1){
+        $pagechange=1;
+        $nowpage=1;
+        $chat=3;//enterを送信
+    }
+    */
+    //name
+    if ($InputBox.getStatus()==1 && $gonow==1){
+        $gonow=0;
+        $name=[$InputBox.getText()];
+        $nameFile.obj($name);
+    }
+    
+    if ($InputBox.getStatus()==2 && $gonow==1){
+        $gonow=0;
+    }
+    if($nbutton.clicked==1 && $gonow==0){
+        $gonow=1;
+        $InputBox.open("名前を変更","","noname",0,0);
+    }
+
+    //content
+    if ($InputBox.getStatus()==1 && $gonow==2){
+        $gonow=0;
+        $content=$InputBox.getText();
+        $chat=1;//contentを送信
+    }
+    if ($InputBox.getStatus()==2 && $gonow==2){
+        $gonow=0;
+    }
+    if($tbutton.clicked==1 && $gonow==0){
+        $gonow=2;
+        $InputBox.open("呟く","","",500,0);
+    }
+    
+    //skin
+    if ($InputBox.getStatus()==1 && $gonow==3){
+        $gonow=0;
+        $skin=[$InputBox.getText()];
+        $skinFile.obj($skin);
+    }
+    if ($InputBox.getStatus()==2 && $gonow==3){
+        $gonow=0;
+    }
+    if($sbutton.clicked==1 && $gonow==0){
+        $gonow=3;
+        $InputBox.open("スキン変更","","",500,0);
+    }
+    
+    //selectroom
+    if ($InputBox.getStatus()==1 && $gonow==4){
+        if ($InputBox.getText()>=0 && $InputBox.getText()<=999 && $InputBox.getText()==trunc($InputBox.getText())){
+            $gonow=0;
+            $pagechange=1;
+            $nowpage=$InputBox.getText();
+            $chat=3;//enterを送信
+        }
+        else{//部屋番号が不適切なとき
+            $InputBox.open("部屋選択","1~999の整数を入力して下さい","",500,0);
+        }
+    }
+    if ($InputBox.getStatus()==2 && $gonow==4){
+        $gonow=0;
+    }
+    if($rbutton.clicked==1 && $gonow==0){
+        $gonow=4;
+        $InputBox.open("部屋選択","1~999の整数を入力して下さい","",500,0);
+    }
+
+    
+    if ($myNo != null) p = $skin; else p = $skin;
+    if (getkey(37) || $pad.getLeft() ) x -= 3;
+    if (getkey(38) || $pad.getUp()   ) y -= 3;
+    if (getkey(39) || $pad.getRight()) x += 3;
+    if (getkey(40) || $pad.getDown() ) y += 3;
+    // 画面外から出ないよう制御
+    x = clamp(16, $screenWidth - 16, x);
+    y = clamp(16, $screenHeight - 16, y); //-54だった
+    // 移動 or 0.3秒たったらデータを送信。
+    // ただしラグが大きいときは送信頻度を減らす（送信データが待ちで溜まっていく場合があるのでその防止策）
+    if (
+    $frameCount % (1 + floor($latency / 16)) == 0 && 
+    (x != ox || y != oy || $frameCount - otime >= 20)
+    ) {
+        ox = x;
+        oy = y;
+        otime = $frameCount;
+        
+        // 自分のデータを送信する
+        // Object（{}で囲うやつ）にmes変数を付ければ、他は好きなデータを送ることができる
+        // 送ったデータは同じゲームに接続した全員（自分も含め）に配られる
+        // sendには、Object、Array、文字列、数値、バイナリデータ(JavaScriptのUint8Array等)などを送れる
+        
+        $t2ws.send({
+            mes: "playerXY",
+            time: performance.now(),
+            playerNo: $myNo,
+            x,
+            y,
+            latency: $latency,
+            name: $name,
+            skin:$skin,
+            chat: $chat,
+            content:$content,
+            nowpage:$nowpage,
+        });
+        
+    }
+    update();
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='NetMng.tonyu' data-lastupdate='1698031787473' >native window;
+native performance;
+native setInterval;
+native clearInterval;
+
+$onlineOpen = false;
+$mirrorAry = [];
+$latency = 0;
+//$name = "noname";
+$chat = 0;
+$content = "";
+
+$latencyMin = 30000; $latencyMinTime = performance.now();
+$latencyMax = 0; $latencyMaxTime = performance.now();
+
+var pingFuncInterval = null;
+
+if ($t2ws == null) { // ページ遷移後も接続させる＆重複接続しないためのif文
+    $t2ws = new T2WebSocket;
+} else {
+    $onlineOpen = true;
+}
+if ($t2ws.sock == null) { // ページ遷移後も接続させる＆重複接続しないためのif文
+    $t2ws.connect("neoroom");
+}
+
+// 接続開始通知のコールバックを設定する
+$t2ws.setOnOpenListener(\(e) {
+    //print("open"/*, e*/);
+    $onlineOpen = true;
+    // 画面をバックグラウンドにしてもpingを送る
+    // バックグラウンドでも接続を維持したいときに、下の処理のコメントを外す
+    // (30秒以内に何かしらサーバーに送れないと、サーバー側でタイムアウトとして切断される)
+    // pingFuncInterval = setInterval(\() {
+    //     $t2ws.send("ping");
+    // }, 5000);
+});
+
+// 切断通知のコールバックを設定する
+$t2ws.setOnCloseListener(\(e) {
+    //print("close"/*, e*/);
+    $onlineOpen = false;
+    // if (pingFuncInterval) { // 上記pingのsetIntervalのキャンセル
+    //     clearInterval(pingFuncInterval);
+    //     pingFuncInterval = null;
+    // }
+});
+
+// エラーのコールバックを設定する
+$t2ws.setOnErrorListener(\(e) {
+    //print("error"/*, e*/);
+});
+
+// 受信用のコールバックを設定する
+$t2ws.setOnMessageListener(\(obj) {
+    // obj.mesが_(アンダースコアから始まるのはサーバーから送られてくる情報)
+    // 例：「_start」「_connection」「_close」
+    
+    if (obj.mes == "_start") { // 通信開始時の情報
+        $myNo = obj.playerNo;
+        //print("myName:" + ($myNo + 1) + "P");
+        
+    } else if (obj.mes == "_connection") { // 自分または誰かが、接続した（自分より先に接続した人は通知されない）
+        //print("connect:",(obj.playerNo + 1) + "P");
+        
+        
+    } else if (obj.mes == "_close") { // 自分または誰かが、切断・タイムアウトした（自分より後に切断した人は通知されない）
+        //print("close:", (obj.playerNo + 1) + "P");
+        var m = $mirrorAry[obj.playerNo];
+        if (m) { // 切断したら該当キャラをすぐ暗くする
+            m.otime = 60 * 25;
+        }
+        
+    } else if (obj.mes == "playerXY") { // ゲームの情報（あるキャラの位置）
+        var playerNo = obj.playerNo;
+        if (playerNo == null) return;
+        var m = $mirrorAry[playerNo];
+        if (!m) {
+            //print("exists:", (playerNo + 1) + "P");
+            m = new Mirror{playerNo, x:-999, y:-999, p:playerNo, zOrder:10, otime:0};
+            $mirrorAry[playerNo] = m;
+        }
+        m.x = obj.x;
+        m.y = obj.y;
+        m.otime = 0;
+        m.latency = obj.latency;
+        m.name = obj.name;
+        m.skin = obj.skin;
+        m.chat = obj.chat;
+        m.content = obj.content;
+        m.nowpage = obj.nowpage;
+        if (playerNo == $myNo) { // 自分が送信したデータも帰ってくるので、それで通信ラグを計算
+            var l = floor(performance.now() - obj.time);
+            if (l >= 0){
+                $latency = floor(performance.now() - obj.time);
+            }
+        }
+    }
+});
+
+while (true) {
+    if (getkey(1) == 0 && $touches[0].touched == 1) {
+        $pad.alpha = 255;
+        $pad.active = true;
+    }
+    // 通信ラグの表示関連
+    var nowTime = performance.now();
+    if (nowTime - $latencyMinTime >= 10000 && $latency >= 1) { $latencyMin = $latency; $latencyMinTime = nowTime; }
+    if (nowTime - $latencyMaxTime >= 10000 && $latency >= 1) { $latencyMax = $latency; $latencyMaxTime = nowTime; }
+    if ($latency < $latencyMin && $latency >= 1) { $latencyMin = $latency; $latencyMinTime = nowTime; }
+    if ($latency > $latencyMax && $latency >= 1) { $latencyMax = $latency; $latencyMaxTime = nowTime; }
+    drawText($screenWidth - 2 - 150 +50, 2, "ping:" + $latency + "ms", "rgb(255,255,255)", 16);
+    drawText($screenWidth - 2 - 150 +50, 2 + 20, "pingMin:" + $latencyMin + "ms", "rgb(255,255,255)", 16);
+    drawText($screenWidth - 2 - 150 +50, 2 + 40, "pingMax:" + $latencyMax + "ms", "rgb(255,255,255)", 16);
+    update();
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Saver.tonyu' data-lastupdate='1697759252208' >var s;
+var i;
+var st;
+var douituhantei;
+s=0;
+st=0;
+douituhantei=0;
+$save=new Array();
+$save[0]="a";
+$save[1]="b";
+$save[2]="c";
+//$save.push($InputBox.getText());
+while (true) {
+    s=$save.length;
+    
+    if ($InputBox.getStatus()==0){
+        st=0;
+    }
+    
+    if ($InputBox.getStatus()==2){
+        $InputBox.open("Playernameを追加","","noname",0,0);
+    }
+    
+    //登録システム
+    if ($InputBox.getStatus()==1 && st==0){
+        st=1;
+        for (i=0; i<s; i++) {
+            if ($save[i]==(($InputBox.getText()))){
+                douituhantei=1;
+            }
+        }
+        if (douituhantei==0){
+            $save[s]=($InputBox.getText());
+        }
+        douituhantei=0;
+    }
+    //ここまで登録システム
+    
+    if(getkey("space")==1){
+        print("$save:"+$save);
+        print("s:"+s);
+        
+    }
+    
+    if(getkey("R")==1){
+        $InputBox.open("Playernameを追加","","noname",0,0);
+    }
+    update();
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='T2WebSocket.tonyu' data-lastupdate='1697759252212' >// T2WebSocket 1.1.0
+// Tonyu2でWebSocketを使うためのライブラリ
+
+extends null;
+native WebSocket;
+native console;
+native JSON;
+native Date;
+native String;
+native ArrayBuffer;
+native Blob;
+native DataView;
+native location;
+
+var sock = null;
+var onOpen = null;
+var onClose = null;
+var onError = null;
+var onMessage = null;
+
+\connect(roomName, url) {
+    if (sock) return;
+    try {
+        if (url == null) { // URLが指定されていな場合、デフォルトのURLに接続する
+            var prjPath = $currentProject.getDir()._path;
+            prjPath = prjPath ? prjPath.match("/[^/]+/$") : null;
+            prjPath = prjPath ? prjPath[0] : ""; // "C:/Tonyu2/Projects/t2websocket/" -> "/t2websocket/"
+
+            var wsProtocol = "wss"; // ws:http用(暗号化なし), wss:https用(暗号化あり) 
+            var wsHost = "t2ws.mkbcr.net"; // WebSocketのサーバープログラムがある接続先
+            var wsPort = 443;
+            var wsPathName = location.hostname + location.pathname + prjPath; // ここの名前が同じゲーム同士で、通信を共有し合います
+
+            var url = wsProtocol + "://" + wsHost + ":" + wsPort + "/" + wsPathName;
+        }
+        if (roomName == null) roomName = "";
+        url = url + roomName;
+        //console.log(url);
+        
+        sock = new WebSocket(url);
+        sock.addEventListener("open", \(e) {
+            if (onOpen) onOpen(e);
+        });
+        sock.addEventListener("message", \(e) {
+            recv(e.data);
+        });
+        sock.addEventListener("close", \(e) {
+            if (onClose) onClose(e);
+            sock = null;
+        });
+        sock.addEventListener("error", \(e) {
+            if (onError) onError(e);
+        });
+    } catch (e) {
+        console.log("websocket connect error", e);
+    }
+}
+
+\close() {
+    if (sock) {
+        sock.close();
+        sock = null;
+    }
+}
+
+\send(d) {
+    if (sock && sock.readyState == 1) { // WebSocket.OPEN
+        if (
+        d is String ||
+        d is ArrayBuffer ||
+        d is Blob ||
+        _isTypedArray(d)
+        ) {
+            sock.send(d);
+        } else if (d is Object) {
+            sock.send(JSON.stringify(d));
+        } else {
+            sock.send(d);
+        }
+    }
+}
+
+\recv(d) {
+    try {
+        var obj = JSON.parse(d);
+        if (onMessage) {
+            onMessage(obj);
+        }
+    } catch (e) {
+        if (onMessage) {
+            onMessage(d);
+        }
+    }
+}
+
+// 接続開始通知のコールバックをセットするメソッド
+\setOnOpenListener(l) {
+    onOpen = l;
+}
+
+// データ受信のコールバックをセットするメソッド
+\setOnMessageListener(l) {
+    onMessage = l;
+}
+
+// 切断通知コールバックをセットするメソッド
+\setOnCloseListener(l) {
+    onClose = l;
+}
+
+// エラーのコールバックをセットするメソッド
+\setOnErrorListener(l) {
+    onError = l;
+}
+
+\_isTypedArray(value) {
+    return ArrayBuffer.isView(value) && !(value instanceof DataView);
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1697759252200' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ],
+        "noLoopCheck": true,
+        "field_strict": true
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {
+        "jquery_ui": 1
+    },
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1636275182233,
+    "social": {
+        "prjName": "t2websocket",
+        "title": "t2websocket",
+        "whenPrjDirExists": "selectPolicy"
+    }
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1698760529229' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        }
+    ],
+    "sounds": []
+}</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
