@@ -167,7 +167,7 @@ update();}</script>
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1702524105178' >new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48,layer:$backLayer};
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1702524719244' >new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48,layer:$backLayer};
 
 $highscoreFile=file("opzariohighscore.json");
 
@@ -179,6 +179,7 @@ if ($highscoreFile.exists()) {
 
 $restart=1;
 start=0;
+$hp=0;
 while(1){
 
     if ($restart==1){
@@ -191,6 +192,7 @@ while(1){
             $frontLayer.all().die();
             new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:100,fillStyle:"green",text:"オプザリオ",font:"HGP行書体"};
             new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,fillStyle:"yellow",template:"ハイスコア:$highscore"};
+            new Label{x:$screenWidth/2,y:$screenHeight/2+50,size:30,fillStyle:"yellow",template:"前回スコア:$hp"};
             $saikai=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"skyblue",text:"開始"};
             start=1;
         }
@@ -376,7 +378,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1702524254379' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1702524769478' >
 {
     "images": [
         {
