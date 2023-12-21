@@ -270,7 +270,7 @@ update();}</script>
     }
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1703159593861' >includes Method;
+<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1703160497016' >includes Method;
 $s=0;
 $f=0;
 
@@ -298,7 +298,7 @@ new Label{x:$screenWidth-100,y:80,size:30,fillStyle:"yellow",template:"$pz"};
 new Label{x:$screenWidth-100,y:110,size:30,fillStyle:"yellow",template:"$s"};
 new Label{x:$screenWidth-100,y:140,size:30,fillStyle:"yellow",template:"$f"};
 */
-pad=new Pad{buttonCnt:0};
+pad=new Pad{buttonCnt:1,size:10,button1Text:"跳"};
 
 while(1){
     //座標化
@@ -345,7 +345,7 @@ while(1){
         $vx+=$speedbai*$speed*$Math.cos($s);
         $vz+=$speedbai*$speed*$Math.sin($s);
     }
-    if (getkey(32)>=1 && $jump==0){
+    if ((getkey(32)>=1 || pad.getButton(1)) && $jump==0){
         $jump=1;
         $jumpcnt=0;
     }
@@ -418,7 +418,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703159618333' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703160534685' >
 {
     "images": [
         {
