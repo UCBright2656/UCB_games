@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="icon" href="https://ucbright2656.github.io/UCB_games/picture/op_logo3.png">
+<title>Optimus Games</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703159476128' >includes Method,Maze;
+$Screen.setBGColor("#088");//背景
+
+new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:100,fillStyle:"yellow",text:"Opinmaze",font:"HGP行書体"};
+$kaishi=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"gray",text:"開始"};
+while(1){
+    if ($kaishi.clicked==1){
+        $frontLayer.all().die();
+        break;
+    }
+}
+
+new Ziki;//自機
+new Message{text:"start",fillStyle:"yellow",imx:1,imy:9,imz:1};
+new Message{text:"goal",fillStyle:"blue",imx:49,imy:9,imz:49};
+
+$size=64;
+
+xy=new Array;
+
+color=new Array;
+color[1]="red";
+color[2]="green";
+color[3]="brown";
+
+//ブロック配列
+$block=new Array;
+
+$habax=100;
+$habay=100;
+$habaz=100;
+
+for (i=0; i<$habax; i++) {
+    $block[i]=new Array;
+    for (j=0; j<$habay; j++) {
+        $block[i][j]=new Array;
+        for (k=0; k<$habaz; k++) {
+            $block[i][j][k]=0;
+        }
+    }
+}
+
+//ブロック配置
+for (i=0; i<51; i++) {
+    for (k=0; k<51; k++) {
+        $block[i][10][k]=3;//床
+        $block[i][8][0]=2;//壁
+        $block[i][9][0]=2;
+        $block[0][8][k]=2;
+        $block[0][9][k]=2;
+        $block[i][8][50]=2;
+        $block[i][9][50]=2;
+        $block[50][8][k]=2;
+        $block[50][9][k]=2;
+    }
+}
+
+boutaoshi;//迷路生成
+
+$Boot.newLimit=100000; // 現在の オブジェクト数+スレッド数 の限度
+update(); // 次フレームから適用されます [参考] 
+
+//描画距離
+byougaxz=8;
+byougay=8;
+
+$no=0;
+while(1){
+    for (i=byougaxz; i>=0; i--) {
+        for (j=byougay; j>=0; j--) {
+            for (k=byougaxz; k>=0; k--) {
+                if (eblock($px+i,$py+j,$pz+k)){
+                    parallel("rippou",$px+i,$py+j,$pz+k,color[$block[$px+i][$py+j][$pz+k]]);
+                }
+                if (eblock($px-i,$py+j,$pz+k)){
+                    parallel("rippou",$px-i,$py+j,$pz+k,color[$block[$px-i][$py+j][$pz+k]]);
+                }
+                if (eblock($px+i,$py-j,$pz+k)){
+                    parallel("rippou",$px+i,$py-j,$pz+k,color[$block[$px+i][$py-j][$pz+k]]);
+                }
+                if (eblock($px-i,$py-j,$pz+k)){
+                    parallel("rippou",$px-i,$py-j,$pz+k,color[$block[$px-i][$py-j][$pz+k]]);
+                }
+                if (eblock($px+i,$py+j,$pz-k)){
+                    parallel("rippou",$px+i,$py+j,$pz-k,color[$block[$px+i][$py+j][$pz-k]]);
+                }
+                if (eblock($px-i,$py+j,$pz-k)){
+                    parallel("rippou",$px-i,$py+j,$pz-k,color[$block[$px-i][$py+j][$pz-k]]);
+                }
+                if (eblock($px+i,$py-j,$pz-k)){
+                    parallel("rippou",$px+i,$py-j,$pz-k,color[$block[$px+i][$py-j][$pz-k]]);
+                }
+                if (eblock($px-i,$py-j,$pz-k)){
+                    parallel("rippou",$px-i,$py-j,$pz-k,color[$block[$px-i][$py-j][$pz-k]]);
+                }
+            }
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Maze.tonyu' data-lastupdate='1703079069831' >\bset{//ブロックを配置する
+    for (i=1; i<50; i++) {
+        for (j=1; j<50; j++) {
+            $block[i][9][j]=maze[i][j];
+            $block[i][8][j]=maze[i][j];
+        }
+    }
+}
+
+\boutaoshi{//棒倒し法
+    maze=new Array;
+    for (i=1; i<50; i++) {
+        maze[i]=new Array;
+        for (j=1; j<50; j++) {
+            if (i%2==0 && j%2==0){
+                maze[i][j]=2;
+            }
+            else{
+                maze[i][j]=0;
+            }
+        }
+    }
+    
+    for (ii=1; ii<25; ii++) {
+        for (jj=1; jj<25; jj++) {
+            i=2*ii;
+            j=2*jj;
+            for (k=1; k<1000; k++) {
+                if (j==2){
+                    m=rnd(4);
+                
+                }
+                else{
+                    m=rnd(3);
+                }
+                switch(m){
+                    case 0:bou=maze[i][j+1];break;
+                    case 1:bou=maze[i][j-1];break;
+                    case 2:bou=maze[i+1][j];break;
+                    case 3:bou=maze[i-1][j];break;
+                }
+                if (bou!=2){
+                    break;
+                }
+            }
+            switch(m){
+                case 0:maze[i][j+1]=2;break;
+                case 1:maze[i][j-1]=2;break;
+                case 2:maze[i+1][j]=2;break;
+                case 3:maze[i-1][j]=2;break;
+            }
+        }
+    }
+    
+    bset;
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1703156394200' >includes Method;
+
+messagex=64*imx+32;
+messagey=64*imy+16;
+messagez=64*imz+32;
+zOrder=-1;
+while(1){
+    message(messagex,messagey,messagez);
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703156254340' >\viw(x0,y0,z0){//二次元座標を得る
+    r=new Array;
+//平行移動
+    x1=x0-$x;
+    y1=y0-$y;
+    z1=z0-$z;
+//水平回転
+    x2=x1*$Math.cos($s)+z1*$Math.sin($s);
+    y2=y1;
+    z2=-x1*$Math.sin($s)+z1*$Math.cos($s);
+//鉛直回転
+    x3=x2;
+    y3=y2*$Math.cos($f)-z2*$Math.sin($f);
+    z3=y2*$Math.sin($f)+z2*$Math.cos($f);
+//二次元化
+    if (z3>=0){
+        x4=$screenWidth/2+x3/z3*300;
+        y4=$screenHeight/2+y3/z3*300;
+    }
+    else{//z3<0ならば描画しない
+        x4=null;
+        y4=null;
+    }
+//戻り値    
+    r[0]=x4;
+    r[1]=y4;
+    r[2]=z3;
+    return(r);
+}
+
+\sp(a,b){//ポリゴンを設定
+    if (xy[b][0]!=null){
+        setPolygon(a,xy[b][0],xy[b][1]);
+    }
+    else{//z3<0ならば描画しない
+        $no=1;
+    }
+}
+
+\men(a,b,c,d,col){//面を描画
+    sp(0,a);
+    sp(1,b);
+    sp(2,c);
+    sp(3,d);
+    if ($no==0){
+        fillPolygon(0,0,4,"black");
+        fillPolygon(0,0,4,col);
+    }
+    $no=0;
+}
+
+\rippou(jx,jy,jz,col){//立方体を描画
+    for (i=0; i<8; i++) {
+        ix=i%2;
+        iy=(i-ix)/2%2;
+        iz=(i-ix-iy*2)/4%2;
+        xy[i]=viw((jx+ix)*$size,(jy+iy)*$size,(jz+iz)*$size);
+    }
+    
+    if($x<=jx*$size && (jx==0 || $block[jx-1][jy][jz]==0)){
+        men(0,4,6,2,col);
+    }
+    if($x>=(jx+1)*$size && (jx==$habax-1 || $block[jx+1][jy][jz]==0)){
+        men(1,5,7,3,col); 
+    }
+    if($y<=jy*$size && (jy==0 || $block[jx][jy-1][jz]==0)){
+        men(0,4,5,1,col);
+    }
+    if($y>=(jy+1)*$size && (jy==$habay-1 || $block[jx][jy+1][jz]==0)){
+        men(2,6,7,3,col); 
+    }
+    if($z<=jz*$size && (jz==0 || $block[jx][jy][jz-1]==0)){
+        men(0,1,3,2,col);
+    }
+    if($z>=(jz+1)*$size && (jz==$habaz-1 || $block[jx][jy][jz+1]==0)){
+        men(4,5,7,6,col); 
+    }
+}
+
+\eblock(x,y,z){//ブロックが存在することを確認
+    return(x>=0&&x<=$habax-1&&y>=0&&y<=$habay-1&&z>=0&&z<=$habaz-1&&$block[x][y][z]!=0);
+}
+
+\message(mx,my,mz){
+    if (viw(mx,my,mz)[2]<=512){
+        x=viw(mx,my,mz)[0];
+        y=viw(mx,my,mz)[1];
+        size=5000/viw(mx,my,mz)[2];
+    }
+    else{
+        x=null;
+    }
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Ziki.tonyu' data-lastupdate='1703159593861' >includes Method;
+$s=0;
+$f=0;
+
+$x=64*1.5;
+$y=64*(8);
+$z=64*1.5;
+
+$vx=0;
+$vy=0;
+$vz=0;
+
+$speed=6;
+$speedbai=1;
+
+$jump=2;
+$jumpcnt=0;
+
+playersizexz=20;
+
+//デバック用
+/*
+new Label{x:$screenWidth-100,y:20,size:30,fillStyle:"yellow",template:"$px"};
+new Label{x:$screenWidth-100,y:50,size:30,fillStyle:"yellow",template:"$py"};
+new Label{x:$screenWidth-100,y:80,size:30,fillStyle:"yellow",template:"$pz"};
+new Label{x:$screenWidth-100,y:110,size:30,fillStyle:"yellow",template:"$s"};
+new Label{x:$screenWidth-100,y:140,size:30,fillStyle:"yellow",template:"$f"};
+*/
+pad=new Pad{buttonCnt:0};
+
+while(1){
+    //座標化
+    $px=floor($x/64);
+    $py=floor($y/64);
+    $pz=floor($z/64);
+    ///角度
+    $s-=$touches[0].vx/200;
+    if ($f>=-1.57 && $f<=1.57){
+        $f+=$touches[0].vy/200;
+    }
+    if ($f<=-1.57){
+        $f=-1.57;
+    }
+    if ($f>=1.57){
+        $f=1.57;
+    }
+    ///移動
+    //速度初期化
+    $vx=0;
+    $vy=0;
+    $vz=0;
+    //Ctrl
+    if (getkey("Ctrl")>=1){
+        $speedbai=2;
+    }
+    else{
+        $speedbai=1;
+    }
+    //WASD,Space,Shift
+    if (getkey("W")>=1 || pad.getUp()){
+        $vx-=$speedbai*$speed*$Math.sin($s);
+        $vz+=$speedbai*$speed*$Math.cos($s);
+    }
+    if (getkey("S")>=1 || pad.getDown()){
+        $vx+=$speedbai*$speed*$Math.sin($s);
+        $vz-=$speedbai*$speed*$Math.cos($s);
+    }
+    if (getkey("A")>=1 || pad.getLeft()){
+        $vx-=$speedbai*$speed*$Math.cos($s);
+        $vz-=$speedbai*$speed*$Math.sin($s);
+    }
+    if (getkey("D")>=1 || pad.getRight()){
+        $vx+=$speedbai*$speed*$Math.cos($s);
+        $vz+=$speedbai*$speed*$Math.sin($s);
+    }
+    if (getkey(32)>=1 && $jump==0){
+        $jump=1;
+        $jumpcnt=0;
+    }
+    if ($jump==1){
+        $jumpcnt++;
+        $vy-=$speed*2-$jumpcnt/2;
+        if ($jumpcnt>=48){
+            $jump=2;
+        }
+    }
+    //デバック用
+    /*
+    if (getkey("B")>=1){
+        $vy-=$speed;
+    }
+    if (getkey("Shift")>=1){
+        $vy+=$speed;
+    }*/
+    //重力
+    $vy+=$speed*1/2;
+    //当たり判定
+    if(eblock($px,$py+2,$pz) && $vy>0 && $y+96>=($py+2)*$size){//y+
+        $vy=0;
+        $jump=0;
+    }
+    if(eblock($px,$py-1,$pz) && $vy<0 && $y-32<=($py)*$size){//y-
+        $vy=0;
+    }
+    if((eblock($px+1,$py+1,$pz)||eblock($px+1,$py,$pz)) && $vx>0 && $x+playersizexz>=($px+1)*$size){//x+
+        $vx=0;
+    }
+    if((eblock($px-1,$py+1,$pz)||eblock($px-1,$py,$pz)) && $vx<0 && $x-playersizexz<=($px)*$size){//x-
+        $vx=0;
+    }
+    if((eblock($px,$py+1,$pz+1)||eblock($px,$py,$pz+1)) && $vz>0 && $z+playersizexz>=($pz+1)*$size){//z+
+        $vz=0;
+    }
+    if((eblock($px,$py+1,$pz-1)||eblock($px,$py,$pz-1)) && $vz<0 && $z-playersizexz<=($pz)*$size){//z-
+        $vz=0;
+    }
+    //移動(速度適用)
+    $x+=$vx;
+    $y+=$vy;
+    $z+=$vz;
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1703148557197' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703159618333' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32
+        }
+    ],
+    "sounds": []
+}</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
