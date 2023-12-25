@@ -99,7 +99,14 @@ update();}</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='Line.tonyu' data-lastupdate='1696809985412' ></script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1696834562945' >$Screen.resize($screenWidth,$screenHeight*2);
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703548084386' >$highscoreFile=file("Suicahighscore.json");
+if ($highscoreFile.exists()) {
+    $highscore=$highscoreFile.obj();
+} else {
+    $highscore=0;
+}
+
+$Screen.resize($screenWidth,$screenHeight*2);
 new Line{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
 new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+92};
 new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+94};
@@ -112,14 +119,31 @@ new Label{x:$screenWidth-120,y:100,size:30,fillStyle:"black",template:"スコア
 
 while(1) {
     if ($gameover<1){
+        if ($score>$highscore){
+            $highscore=[$score];
+            $highscoreFile.obj($highscore);
+        }
+            
         all().die();
         $frontLayer.all(Label).die();
         new Line{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+93};
         new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,fillStyle:"black",template:"ゲームオーバー"};
-        new Label{x:$screenWidth/2,y:$screenHeight/2+60,size:30,fillStyle:"black",template:"クリックまたはタップして再開"};
-        new Label{x:$screenWidth/2,y:$screenHeight/2+120,size:30,fillStyle:"black",template:"スコア: $score"};
-        if($touches[0].touched==1){
+        new Label{x:$screenWidth/2,y:$screenHeight/2+60,size:30,fillStyle:"black",template:"ハイスコア:$highscore"};
+        new Label{x:$screenWidth/2,y:$screenHeight/2+120,size:30,fillStyle:"black",template:"前回のスコア: $score"};
+        //
+        if (s!=1){
+            $tweet=new Button{top:$screenHeight/2-20+250,width:200,height:40,left:$screenWidth/2-100,fillStyle:"green",text:"Xに投稿"};
+            $saikai=new Button{top:$screenHeight/2-20+200,width:200,height:40,left:$screenWidth/2-100,fillStyle:"skyblue",text:"再開"};
+            s=1;    
+        }
+        if ($tweet.clicked==1){
+            $WebPage.openShareTweet("Suicagameのハイスコア:"+$highscore, "https://ucbright2656.github.io/UCB_games/", "オプゲー,オプイン,Suicagame");
+        }
+        if($saikai.clicked==1){
+            $tweet.die();
+            $saikai.die();
             $frontLayer.all(Label).die();
+            s=0;
             //ここから
             new Line{x:0,y:$screenHeight/2-10,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+92};
             new Floor{x:0,y:$screenHeight,scaleX:100,scaleY:1, rotation:0,p=$pat_mapchip+94};
@@ -160,33 +184,10 @@ while(1) {
 
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Next.tonyu' data-lastupdate='1696833714883' >p=$pat_Suica+0;
+<script language='text/tonyu' type='text/tonyu' data-filename='Next.tonyu' data-lastupdate='1703547619872' >p=$pat_Suica+0;
 fruitnext=0;
 while(1) {
     fruit=(rnd(4));
-    /*
-    if((getkey("mouseleft")==1) && $mouseX>0 && $mouseX<$screenWidth){
-        
-        if(fruit==0)
-        p=$pat_Suica+0;
-        if(fruit==1)
-        p=$pat_Suica+1;
-        if(fruit==2)
-        p=$pat_Suica+2;
-        if(fruit==3)
-        p=$pat_Suica+3;
-        
-        if(fruitnext==0)
-        new Cherry{x=$mouseX, y=$screenHeight/2};
-        if(fruitnext==1)
-        new Strawberry{x=$mouseX, y=$screenHeight/2};
-        if(fruitnext==2)
-        new Grape{x=$mouseX, y=$screenHeight/2};
-        if(fruitnext==3)
-        new Decopon{x=$mouseX, y=$screenHeight/2};
-        
-        fruitnext=fruit;
-    }*/
     
     if(($touches[0].touched==1) && $touches[0].x>0 && $touches[0].x<$screenWidth){
         
@@ -406,7 +407,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1696834576554' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703548161730' >
 {
     "images": [
         {
