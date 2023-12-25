@@ -167,7 +167,7 @@ update();}</script>
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1702524719244' >new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48,layer:$backLayer};
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703547279653' >new Background{x:$screenWidth/2,y:$screenHeight/2,scaleX:100,scaleY:100,p=$pat_mapchip+48,layer:$backLayer};
 
 $highscoreFile=file("opzariohighscore.json");
 
@@ -193,12 +193,18 @@ while(1){
             new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:100,fillStyle:"green",text:"オプザリオ",font:"HGP行書体"};
             new Label{x:$screenWidth/2,y:$screenHeight/2,size:30,fillStyle:"yellow",template:"ハイスコア:$highscore"};
             new Label{x:$screenWidth/2,y:$screenHeight/2+50,size:30,fillStyle:"yellow",template:"前回スコア:$hp"};
+            $tweet=new Button{top:$screenHeight/2-20+150,width:200,height:40,left:$screenWidth/2-100,fillStyle:"green",text:"Xに投稿"};
             $saikai=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"skyblue",text:"開始"};
             start=1;
         }
-        if (start==1 && $saikai.clicked==1){
-            start=2;
-            $frontLayer.all().die();
+        if (start==1){
+            if ($tweet.clicked==1){
+                $WebPage.openShareTweet("オプザリオのハイスコア:"+$highscore, "https://ucbright2656.github.io/UCB_games/", "オプゲー,オプイン,オプザリオ");
+            }
+            if (start==1 && $saikai.clicked==1){
+                start=2;
+                $frontLayer.all().die();
+            }
         }
         if (start==2){
             new Myhead{x:500,y:500,p:22};
@@ -378,7 +384,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1702524769478' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703547353797' >
 {
     "images": [
         {
