@@ -136,7 +136,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703770337904' >includes Method;
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703771502687' >includes Method;
 $Screen.resize(370,700);
 $Screen.setBGColor("#000");//背景
 
@@ -235,6 +235,16 @@ new Label{x:$screenWidth/2,y:20,size:30,fillStyle:"yellow",text:"残り時間"};
 new Label{x:$screenWidth/2,y:20+30+10,size:30,fillStyle:"yellow",template:"$combo"+"コンボ"};
 new Label{x:$screenWidth/2,y:20+60+20,size:30,fillStyle:"red",template:"キル数:$kill"};
 new Label{x:$haba*$habax+21+15,y:$starty-$habahalf-11-55,size:30,fillStyle:"pink",template:"HP:"+"$hp",align:"right"};
+
+new Actor{x:60,y:30,p:$col[1],scaleX:2/3};
+new Actor{x:40,y:60,p:$col[2],scaleX:2/3};
+new Actor{x:80,y:60,p:$col[3],scaleX:2/3};
+new Actor{x:40,y:90,p:$col[4],scaleX:2/3};
+new Actor{x:80,y:90,p:$col[5],scaleX:2/3};
+new Label{x:73,y:43,size:15,fillStyle:"yellow",text:"↘"};
+new Label{x:60,y:60,size:15,fillStyle:"yellow",text:"←"};
+new Label{x:47,y:43,size:15,fillStyle:"yellow",text:"↗"};
+new Label{x:60,y:90,size:15,fillStyle:"yellow",text:"↔"};
 
 $t="wait";
 while(1){
@@ -354,7 +364,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703768161032' >//基本判定
+<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703771615592' >//基本判定
 \sh(di,dj,si,sj){//被り無し判定
     if (si+di>=0&&si+di<=$habax-1&&sj+dj>=0&&sj+dj<=$habay-1){//場所判定
         return($sig[si+di][sj+dj]==-1);
@@ -444,6 +454,7 @@ all(ai,aj,as){
 }
 
 \hpset{//hpの表示を更新する
+    $panel.clearRect(0,0,$screenWidth,$screenHeight);
     $panel.setFillStyle("#f00");
     $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,$haba*$habax+21,20);
     $panel.setFillStyle("pink");
@@ -491,7 +502,7 @@ all(ai,aj,as){
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703770344684' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703771693334' >
 {
     "images": [
         {
