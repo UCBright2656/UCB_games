@@ -136,7 +136,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703771502687' >includes Method;
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703772134385' >includes Method;
 $Screen.resize(370,700);
 $Screen.setBGColor("#000");//背景
 
@@ -241,18 +241,16 @@ new Actor{x:40,y:60,p:$col[2],scaleX:2/3};
 new Actor{x:80,y:60,p:$col[3],scaleX:2/3};
 new Actor{x:40,y:90,p:$col[4],scaleX:2/3};
 new Actor{x:80,y:90,p:$col[5],scaleX:2/3};
-new Label{x:73,y:43,size:15,fillStyle:"yellow",text:"↘"};
+new Label{x:73,y:43,size:15,fillStyle:"yellow",text:"︎↘︎"};
 new Label{x:60,y:60,size:15,fillStyle:"yellow",text:"←"};
 new Label{x:47,y:43,size:15,fillStyle:"yellow",text:"↗"};
-new Label{x:60,y:90,size:15,fillStyle:"yellow",text:"↔"};
+new Label{x:60,y:90,size:15,fillStyle:"yellow",text:"⇄"};
 
 $t="wait";
 while(1){
     //残り時間
-    $panel.setFillStyle("#f00");
-    $panel.fillRect($screenWidth/2+60,10,60*10/6,20);
-    $panel.setFillStyle("#0f0");
-    $panel.fillRect($screenWidth/2+60,10,$fingertime/6,20);
+    fillRect($screenWidth/2+60,10,60*10/6,20,"#f00");
+    fillRect($screenWidth/2+60,10,$fingertime/6,20,"#0f0");
     //hp
     hpset;
     //
@@ -502,7 +500,7 @@ all(ai,aj,as){
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703771693334' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703772144374' >
 {
     "images": [
         {
