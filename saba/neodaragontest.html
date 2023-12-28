@@ -30,7 +30,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Copy.tonyu' data-lastupdate='1703748417004' >\atari(i,j){//当たり判定
+<script language='text/tonyu' type='text/tonyu' data-filename='Copy.tonyu' data-lastupdate='1703753923288' >\atari(i,j){//当たり判定
     if ($touches[0].touched!=0){//タッチしていれば
         x0=x>=$startx+(i*$haba)-$habahalf;
         x1=x<=$startx+(i*$haba)+$habahalf;
@@ -106,12 +106,42 @@ while(1){
     $fingertime--;
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703749791377' >includes Method;
+<script language='text/tonyu' type='text/tonyu' data-filename='Enemy.tonyu' data-lastupdate='1703768924616' >x=$screenWidth/2;
+y=20+30+10+32*4;
+scaleX=4;
+
+$ezokusei=1+rnd(5);
+
+p=$zokuseipic[$ezokusei];
+col=$zokuseicol[$ezokusei];
+
+$ehpmax=100+$kill*20;
+$ehp=$ehpmax;
+
+while(1){
+    if ($ehp<=0){
+        $ehp=0;
+        $kill+=1;
+        p=-1;//透明化
+        updateEx(60);
+        new Enemy;
+        die();
+    }
+    fillRect(x-50,y+32*2,100,20,"#555");
+    fillRect(x-50,y+32*2,100*($ehp/$ehpmax),20,col);
+    if ($eattack==1){//攻撃
+        $eattackdamage=1+rnd(10)+$kill*5;
+        $hp-=$eattackdamage;
+        $eattack=0;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703768447524' >includes Method;
 $Screen.resize(350,700);
 $Screen.setBGColor("#000");//背景
 
 $startx=50;
-$starty=420;
+$starty=460;
 $habax=6;
 $habay=5;
 
@@ -127,6 +157,15 @@ new Actor{x:$startx+$haba*$habax-$habahalf,y:$starty-$habahalf-11,width:10,heigh
 
 $ball=new Array;
 $col=[-1,$pat_dragon+0,$pat_dragon+2,$pat_dragon+4,$pat_dragon+6,$pat_dragon+8,$pat_dragon+10];
+/*
+0:無
+1:赤
+2:青
+3:緑
+4:黄
+5:紫
+6:桃
+*/
 $scale=new Array;
 
 $p0=new Array;
@@ -140,7 +179,7 @@ for (i=0; i<$habax+2; i++) {//ball
     $ball[i]=new Array;
     for (j=-5; j<$habay+2; j++) {
         if (i<$habax &&j<$habay){
-            $ball[i][j]=1+rnd(6);//初期$ball配置
+            $ball[i][j]=1+$Math.pow(((i+j)*(i+j)),1/2)%6;//初期$ball配置
         }
         else{
             $ball[i][j]=null;
@@ -164,15 +203,48 @@ for (i=0; i<$habax; i++) {//配列
     }
 }
 
+//
+$damage=new Array;
+for (i=0; i<=6; i++) {
+    $damage[i]=0;
+}
+
+//敵
+$zokuseicol=new Array;
+$zokuseicol[1]="red";
+$zokuseicol[2]="blue";
+$zokuseicol[3]="green";
+$zokuseicol[4]="yellow";
+$zokuseicol[5]="purple";
+$zokuseipic=new Array;
+$zokuseipic[1]=$pat_neko+41;
+$zokuseipic[2]=$pat_neko+40;
+$zokuseipic[3]=$pat_neko+42;
+$zokuseipic[4]=$pat_neko+43;
+$zokuseipic[5]=$pat_neko+48;
+new Enemy;
+
+$fingertime=60*10;
+$combo=0;
+$hpmax=100;
+$hp=$hpmax;
+$kill=0;
+
 new Label{x:$screenWidth/2,y:20,size:30,fillStyle:"yellow",text:"残り時間"};
 new Label{x:$screenWidth/2,y:20+30+10,size:30,fillStyle:"yellow",template:"$combo"+"コンボ"};
+new Label{x:$screenWidth/2,y:20+60+20,size:30,fillStyle:"red",template:"キル数:$kill"};
+new Label{x:$haba*$habax+21+15,y:$starty-$habahalf-11-55,size:30,fillStyle:"pink",template:"HP:"+"$hp",align:"right"};
+
 $t="wait";
 while(1){
+    //残り時間
     $panel.setFillStyle("#f00");
     $panel.fillRect($screenWidth/2+60,10,60*10/6,20);
     $panel.setFillStyle("#0f0");
     $panel.fillRect($screenWidth/2+60,10,$fingertime/6,20);
-
+    //hp
+    hpset;
+    //
     if ($t=="cal"){
         $oticon=1;
         $combo=0;
@@ -204,7 +276,7 @@ while(1){
                     }
                     $oticon=1;
                     $combo+=1;
-                    updateEx(45);
+                    updateEx(45);//0.75秒待つ
                 }
             }
         //$sigのリセット・$unのセット
@@ -241,11 +313,42 @@ while(1){
                 }
             }
         }
+        //指時間
+        $fingertime=60*10;
+        //敵にダメージ
+        for (i=1; i<=5; i++) {
+            $ehp-=$damage[i]*damagebairitu(i)*$combo;
+        }
+        //回復
+        $oldhp=$hp;
+        $hp+=$damage[6]*$combo;
+        if ($hp>$hpmax){//回復の限界
+            $hp=$hpmax;
+        }
+        $recover=$hp-$oldhp;
+        message("$recoverだけ回復した");
+        hpset;
+        updateEx(60);//1秒待つ
+        $message.die();
+        //$damageの初期化
+        for (i=0; i<=6; i++) {
+            $damage[i]=0;
+        }
+        //敵の攻撃
+        if ($ehp>0){//敵のhpが正なら(敵が生きていれば)
+            $eattack=1;
+            message("$eattackdamageのダメージを受けた");
+        }
+        while($eattack==1){
+        }
+        hpset;
+        updateEx(60);//1秒待つ
+        $message.die();
         $t="wait";
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703669210586' >//基本判定
+<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703768161032' >//基本判定
 \sh(di,dj,si,sj){//被り無し判定
     if (si+di>=0&&si+di<=$habax-1&&sj+dj>=0&&sj+dj<=$habay-1){//場所判定
         return($sig[si+di][sj+dj]==-1);
@@ -301,6 +404,7 @@ all(ai,aj,as){
 //
 \deleteanime(ai,aj){//消すアニメーション
     if ($sig[ai][aj]==k){
+        $damage[$ball[ai][aj]]+=1;
         for (l=0; l<10; l++) {
             $scale[ai][aj]+=0.1;
             updateEx(1);
@@ -333,9 +437,29 @@ all(ai,aj,as){
     $drop[ai][aj]=$un[ai][aj];
 }
 
+\hpset{//hpの表示を更新する
+    $panel.setFillStyle("#f00");
+    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,$haba*$habax+21,20);
+    $panel.setFillStyle("pink");
+    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,($haba*$habax+21)*($hp/$hpmax),20);
+}
+
+\message(text){
+    $message=new Label{x:$screenWidth/2-150,y:$starty-$habahalf-11-55-30,size:30,fillStyle:"yellow",template:text,align:"left"};
+}
+
+\damagebairitu(di){
+    result=1;
+    if (di==1 && $ezokusei==3)result=2;
+    if (di==2 && $ezokusei==1)result=2;
+    if (di==3 && $ezokusei==2)result=2;
+    if (di==4 && $ezokusei==5)result=2;
+    if (di==5 && $ezokusei==4)result=2;
+    return(result);
+}
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1703687086026' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1703757044562' >
 {
     "compiler": {
         "namespace": "user",
@@ -361,7 +485,7 @@ all(ai,aj,as){
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703749797920' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703769398891' >
 {
     "images": [
         {
@@ -379,7 +503,8 @@ all(ai,aj,as){
             "name": "$pat_neko",
             "url": "images/neko.png",
             "pwidth": 32,
-            "pheight": 32
+            "pheight": 32,
+            "type": "wh"
         },
         {
             "name": "$pat_mapchip",
