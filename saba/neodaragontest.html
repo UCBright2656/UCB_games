@@ -30,7 +30,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Battlemanager.tonyu' data-lastupdate='1703832369446' >includes Battlemethod;
+<script language='text/tonyu' type='text/tonyu' data-filename='Battlemanager.tonyu' data-lastupdate='1703857174887' >includes Battlemethod;
 $Screen.setBGColor("#000");//背景
 
 $startx=60;
@@ -202,7 +202,7 @@ while(1){
         $fingertime=60*10;
         //敵にダメージ
         for (i=1; i<=5; i++) {
-            $ehp-=$damage[i]*damagebairitu(i)*$combo;
+            $ehp-=$damage[i]*damagebairitu(i)*$combo*20;
         }
         //回復
         $oldhp=$hp;
@@ -432,23 +432,30 @@ while(1){
     $fingertime--;
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Dungeons.tonyu' data-lastupdate='1703825278330' >$dungeonname=new Array;
+<script language='text/tonyu' type='text/tonyu' data-filename='Dungeons.tonyu' data-lastupdate='1703857078835' >$dungeonname=new Array;
 //1
-$dungeonname[1]="炎";
+$dungeonname[1]="炎の間";
 $enemyrow[1][1]="redfish";
 //2
-$dungeonname[2]="水";
+$dungeonname[2]="水の間";
 $enemyrow[2][1]="bluefish";
 //3
-$dungeonname[3]="草";
+$dungeonname[3]="草の間";
 $enemyrow[3][1]="greenfish";
 //4
-$dungeonname[4]="光";
+$dungeonname[4]="光の間";
 $enemyrow[4][1]="yellowfish";
 //5
-$dungeonname[5]="闇";
+$dungeonname[5]="闇の間";
 $enemyrow[5][1]="shark";
-$enemyrow[5][2]="alien";</script>
+$enemyrow[5][2]="alien";
+//6
+$dungeonname[6]="海の試練";
+$enemyrow[6][1]="shark";
+$enemyrow[6][2]="octopus";
+$enemyrow[6][3]="squid";
+$enemyrow[6][4]="crab";
+$enemyrow[6][5]="turtle";</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='Enemy.tonyu' data-lastupdate='1703832819928' >x=$screenWidth/2;
 y=20+30+10+32*4;
@@ -524,7 +531,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Enemycharacter.tonyu' data-lastupdate='1703832735282' >\enemysettei(enemyname,enemypic,enemyzok,enemyhp,enemyatt){//敵の設定をする
+<script language='text/tonyu' type='text/tonyu' data-filename='Enemycharacter.tonyu' data-lastupdate='1703857264053' >\enemysettei(enemyname,enemypic,enemyzok,enemyhp,enemyatt){//敵の設定をする
     $enemypic[enemyname]=enemypic;
     $enemyzok[enemyname]=enemyzok;
     $enemyhp[enemyname]=enemyhp;
@@ -544,7 +551,7 @@ $enemypic=new Array;//敵の見た目
 $enemyzok=new Array;//敵の属性
 $enemyhp=new Array;//敵のhp
 $enemyatt=new Array;//敵の攻撃力の最大値
-
+//
 enemysettei("redfish",$pat_neko+41,1,100,10);
 enemysettei("bluefish",$pat_neko+40,2,100,10);
 enemysettei("greenfish",$pat_neko+42,3,100,10);
@@ -552,11 +559,16 @@ enemysettei("yellowfish",$pat_neko+43,4,100,10);
 enemysettei("shark",$pat_neko+48,5,100,10);
 enemysettei("alien",$pat_sample+2,5,100,20);
 
+enemysettei("octopus",$pat_neko+44,2,500,20);
+enemysettei("squid",$pat_neko+45,2,500,20);
+enemysettei("crab",$pat_neko+46,2,500,20);
+enemysettei("turtle",$pat_neko+47,2,1000,25);
+
 
 
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Homemanager.tonyu' data-lastupdate='1703825214781' >includes Homemethod;
+<script language='text/tonyu' type='text/tonyu' data-filename='Homemanager.tonyu' data-lastupdate='1703856619327' >includes Homemethod;
 $Screen.setBGColor("#573929");//背景
 
 $enemies=new Array;
@@ -566,17 +578,18 @@ $dungeon=new Array;
 $dungeonname=new Array;
 
 //ダンジョンの設定
-for (i=1; i<=5; i++) {
+dungeonsuu=6;
+for (i=1; i<=dungeonsuu; i++) {
     $enemyrow[i]=new Array;
 }
 new Dungeons;
 update();
-for (i=1; i<=5; i++) {
+for (i=1; i<=dungeonsuu; i++) {
     dungeonbutton(i);
 }
 
 while(1){
-    for (i=1; i<=5; i++) {
+    for (i=1; i<=dungeonsuu; i++) {
         if ($dungeon[i].clicked==1){
             j=1;
             while($enemyrow[i][j]!=null){
@@ -584,7 +597,7 @@ while(1){
                 j++;
             }
             $frontLayer.all(Label).die();
-            for (k=1; k<=5; k++) {
+            for (k=1; k<=dungeonsuu; k++) {
                 $dungeon[k].die();
             }
             new Battlemanager;
@@ -644,7 +657,7 @@ new Homemanager;</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703832963237' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703857313353' >
 {
     "images": [
         {
