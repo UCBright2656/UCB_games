@@ -7,10 +7,10 @@
 <script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
 <script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
 <script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
-<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Ball.tonyu' data-lastupdate='1703730857928' >dy=0;
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Ball.tonyu' data-lastupdate='1703826329954' >dy=0;
 while(1){
     scaleX=$scale[i][j];
-    if (findTouch(1) && $t=="wait") {
+    if (findTouch(1) && $t=="wait" && $end!="end") {
         $t="move";
         new Copy{x,y,scaleX,p,b:$ball[i][j]};
     }
@@ -29,6 +29,332 @@ while(1){
         p=$p0[i][j];
     }
 update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Battlemanager.tonyu' data-lastupdate='1703832369446' >includes Battlemethod;
+$Screen.setBGColor("#000");//背景
+
+$startx=60;
+$starty=460;
+$habax=6;
+$habay=5;
+
+$scaleX=1.5;
+$haba=32*$scaleX+1;
+$habahalf=16*$scaleX;
+
+huticol="brown";
+new Actor{x:$startx-$habahalf-11,y:$starty-$habahalf-11,width:$haba*$habax+21,height:10,fillStyle:huticol,align:["left", "top"]};
+new Actor{x:$startx-$habahalf-11,y:$starty+$haba*$habay-$habahalf,width:$haba*$habax+21,height:10,fillStyle:huticol,align:["left", "top"]};
+new Actor{x:$startx-$habahalf-11,y:$starty-$habahalf-11,width:10,height:$haba*$habay+21,fillStyle:huticol,align:["left", "top"]};
+new Actor{x:$startx+$haba*$habax-$habahalf,y:$starty-$habahalf-11,width:10,height:$haba*$habay+20,fillStyle:huticol,align:["left", "top"]};
+
+$ball=new Array;
+$col=[-1,$pat_dragon+0,$pat_dragon+2,$pat_dragon+4,$pat_dragon+6,$pat_dragon+8,$pat_dragon+10,$pat_dragon+12];
+/*
+0:無
+1:赤
+2:青
+3:緑
+4:黄
+5:紫
+6:桃
+7:邪
+*/
+$scale=new Array;
+
+$p0=new Array;
+
+$queue=null;
+$sig=new Array;
+$un=new Array;
+$drop=new Array;
+
+for (i=0; i<$habax+2; i++) {//ball
+    $ball[i]=new Array;
+    for (j=-5; j<$habay+2; j++) {
+        if (i<$habax &&j<$habay){
+            $ball[i][j]=1+$Math.pow(((i+j)*(i+j)),1/2)%6;//初期$ball配置
+        }
+        else{
+            $ball[i][j]=null;
+        }
+    }
+}
+
+for (i=0; i<$habax; i++) {//配列
+    $p0[i]=new Array;
+    $sig[i]=new Array;
+    $scale[i]=new Array;
+    $un[i]=new Array;
+    $drop[i]=new Array;
+    for (j=-5; j<$habay; j++) {
+        $p0[i][j]=0;
+        $sig[i][j]=-1;
+        $scale[i][j]=$scaleX;
+        $un[i][j]=0;
+        $drop[i][j]=0;
+        new Ball{p:$col[$ball[i][j]],i,j};
+    }
+}
+
+//
+$damage=new Array;
+for (i=0; i<=6; i++) {
+    $damage[i]=0;
+}
+
+//敵
+new Enemycharacter;
+$enemynum=1;
+new Enemy;
+
+$fingertime=60*10;
+$combo=0;
+$hpmax=100;
+$hp=$hpmax;
+$kill=0;
+
+new Label{x:$screenWidth/2,y:20,size:30,fillStyle:"yellow",text:"残り時間"};
+new Label{x:$screenWidth/2,y:20+30+10,size:30,fillStyle:"yellow",template:"$combo"+"コンボ"};
+new Label{x:$screenWidth/2,y:20+60+20,size:30,fillStyle:"red",template:"キル数:$kill"};
+new Label{x:$haba*$habax+21+15,y:$starty-$habahalf-11-55,size:30,fillStyle:"pink",template:"HP:"+"$hp",align:"right"};
+
+new Actor{x:60,y:65,p:$pat_aishou};
+
+$t="wait";
+
+while(1){
+    //残り時間
+    fillRect($screenWidth/2+60,10,60*10/6,20,"#f00");
+    fillRect($screenWidth/2+60,10,$fingertime/6,20,"#0f0");
+    //hp
+    hpset;
+    //
+    if ($t=="cal"){
+        $oticon=1;
+        $combo=0;
+        while($oticon==1){//落ち痕がある限り繰り返す
+            $oticon=0;
+        //$sigのセット
+            s=0;
+            for (j=0; j<$habay; j++) {
+                for (i=0; i<$habax; i++) {
+                    all(i,j,s);//$sigのセット
+                    s++;
+                }
+            }
+        //消すアニメーション
+            for (k=0; k<$habax*$habay; k++) {
+                cnt=0;
+                for (i=0; i<$habax; i++) {//消す
+                    for (j=0; j<$habay; j++) {
+                        if ($sig[i][j]==k){
+                            cnt++;//カウント
+                        }
+                    }
+                }
+                if (cnt>=3){//カウントが3以上ならば
+                    for (i=0; i<$habax; i++) {
+                        for (j=0; j<$habay; j++) {
+                            parallel("deleteanime",i,j);//消すアニメーション
+                        }
+                    }
+                    $oticon=1;
+                    $combo+=1;
+                    updateEx(45);//0.75秒待つ
+                }
+            }
+        //$sigのリセット・$unのセット
+            for (i=0; i<$habax; i++) {
+                for (j=-5; j<$habay; j++) {
+                    $sig[i][j]=-1;//$sigのリセット
+                    $un[i][j]=under(i,j);//$unのセット
+                }
+            }
+        //落下アニメーション
+            for (i=0; i<$habax; i++) {
+            
+                for (j=-5; j<$habay; j++) {
+                    if ($un[i][j]!=0){
+                        parallel("dropanime",i,j);//落下アニメーション
+                    }
+                }
+            }
+        //最終処理
+            for (i=0; i<$habax; i++) {
+                for (j=$habay-2; j>=-5; j--) {
+                    while($drop[i][j]!=$un[i][j]){//待機
+                    }
+                    if ($un[i][j]!=0){
+                        $ball[i][j+$un[i][j]]=$ball[i][j];
+                        if (j>=0){
+                            $ball[i][j]=0;
+                        }
+                        else{
+                            $ball[i][j]=1+rnd(6);//新たに生成
+                        }
+                        $drop[i][j]=0;
+                    }
+                }
+            }
+        }
+        //指時間
+        $fingertime=60*10;
+        //敵にダメージ
+        for (i=1; i<=5; i++) {
+            $ehp-=$damage[i]*damagebairitu(i)*$combo;
+        }
+        //回復
+        $oldhp=$hp;
+        $hp+=$damage[6]*$combo;
+        if ($hp>$hpmax){//回復の限界
+            $hp=$hpmax;
+        }
+        $recover=$hp-$oldhp;
+        if ($recover>0){
+            message("$recoverだけ回復した");
+            hpset;
+            updateEx(60);//1秒待つ
+            $message.die();
+        }
+        //$damageの初期化
+        for (i=0; i<=6; i++) {
+            $damage[i]=0;
+        }
+        //敵の攻撃
+        if ($ehp>0){//敵のhpが正なら(敵が生きていれば)
+            $eattack=1;
+        }
+        while($eattack==1){
+        }
+        if ($ehp>0){//敵のhpが正なら(敵が生きていれば)
+            if ($eattackdamage>0){
+                message("$eattackdamageのダメージを受けた");
+            }
+            else{
+                message("邪魔をつくられた");
+            }
+        }
+        hpset;
+        updateEx(60);//1秒待つ
+        if ($ehp>0){
+            $message.die();
+        }
+        $t="wait";
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Battlemethod.tonyu' data-lastupdate='1703819593287' >//基本判定
+\sh(di,dj,si,sj){//被り無し判定
+    if (si+di>=0&&si+di<=$habax-1&&sj+dj>=0&&sj+dj<=$habay-1){//場所判定
+        return($sig[si+di][sj+dj]==-1);
+    }
+    else{
+        return(0);
+    }
+}
+
+\bh(di,dj,bi,bj){//同じ判定
+    if (bi+di>=0&&bi+di<=$habax-1&&bj+dj>=0&&bj+dj<=$habay-1){//場所判定
+        return($ball[bi][bj]==$ball[bi+di][bj+dj]);
+    }
+    else{
+        return(0);
+    }
+}
+//複合判定
+\sb(xy,pn1,pn2,sbi,sbj,sbs){//被り無し・同じ・場所判定
+    if (xy=="x"){
+        if (sh(0,0,sbi,sbj)||sh(pn1,0,sbi,sbj)||sh(pn2,0,sbi,sbj)){//被り無し
+            if(bh(pn1,0,sbi,sbj)&&bh(pn2,0,sbi,sbj)){//同じ
+                $sig[sbi][sbj]=sbs;
+                $sig[sbi+pn1][sbj]=sbs;
+                $sig[sbi+pn2][sbj]=sbs;
+                all(sbi+pn1,sbj,sbs);
+                all(sbi+pn2,sbj,sbs);
+            }
+        }
+    }
+    if (xy=="y"){
+        if (sh(0,0,sbi,sbj)||sh(0,pn1,sbi,sbj)||sh(0,pn2,sbi,sbj)){//被り無し
+            if(bh(0,pn1,sbi,sbj)&&bh(0,pn2,sbi,sbj)){//同じ
+                $sig[sbi][sbj]=sbs;
+                $sig[sbi][sbj+pn1]=sbs;
+                $sig[sbi][sbj+pn2]=sbs;
+                all(sbi,sbj+pn1,sbs);
+                all(sbi,sbj+pn2,sbs);
+            }
+        }
+    }
+}
+//全方位
+all(ai,aj,as){
+    sb("x",1,2,ai,aj,as);//x++
+    sb("x",-1,1,ai,aj,as);//x+-
+    sb("x",-2,-1,ai,aj,as);//x--
+    sb("y",1,2,ai,aj,as);//y++
+    sb("y",-1,1,ai,aj,as);//y+-
+    sb("y",-2,-1,ai,aj,as);//y--
+}
+
+//
+\deleteanime(ai,aj){//消すアニメーション
+    if ($sig[ai][aj]==k){
+        $damage[$ball[ai][aj]]+=1;
+        for (l=0; l<10; l++) {
+            $scale[ai][aj]+=0.1;
+            update();
+        }
+        $ball[ai][aj]=0;
+        $scale[ai][aj]=$scaleX;
+    }
+}
+
+\under(ui,uj){//下に何個$ball[ui][uj+1]==0があるかを返す関数
+    if (uj==$habay-1){
+        result=0;
+    }
+    else{
+        if ($ball[ui][uj+1]==0){
+            result=under(ui,uj+1)+1;
+        }
+        else{
+            result=under(ui,uj+1);
+        }
+    }
+    return(result);
+}
+
+\dropanime(ai,aj){//落下アニメーション
+    while($drop[ai][aj]<$un[ai][aj]){
+        $drop[ai][aj]+=$un[ai][aj]/60;
+        update();
+    }
+    $drop[ai][aj]=$un[ai][aj];
+}
+
+\hpset{//hpの表示を更新する
+    $panel.clearRect(0,0,$screenWidth,$screenHeight);
+    $panel.setFillStyle("#f00");
+    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,$haba*$habax+21,20);
+    $panel.setFillStyle("pink");
+    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,($haba*$habax+21)*($hp/$hpmax),20);
+}
+
+\message(text){
+    $message=new Label{x:$screenWidth/2-150,y:$starty-$habahalf-11-55-30,size:30,fillStyle:"yellow",template:text,align:"left"};
+}
+
+\damagebairitu(di){
+    result=1;
+    if (di==1 && $ezokusei==3)result=2;
+    if (di==2 && $ezokusei==1)result=2;
+    if (di==3 && $ezokusei==2)result=2;
+    if (di==4 && $ezokusei==5)result=2;
+    if (di==5 && $ezokusei==4)result=2;
+    return(result);
+}
+</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='Copy.tonyu' data-lastupdate='1703753923288' >\atari(i,j){//当たり判定
     if ($touches[0].touched!=0){//タッチしていれば
@@ -106,373 +432,191 @@ while(1){
     $fingertime--;
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Enemy.tonyu' data-lastupdate='1703768924616' >x=$screenWidth/2;
+<script language='text/tonyu' type='text/tonyu' data-filename='Dungeons.tonyu' data-lastupdate='1703825278330' >$dungeonname=new Array;
+//1
+$dungeonname[1]="炎";
+$enemyrow[1][1]="redfish";
+//2
+$dungeonname[2]="水";
+$enemyrow[2][1]="bluefish";
+//3
+$dungeonname[3]="草";
+$enemyrow[3][1]="greenfish";
+//4
+$dungeonname[4]="光";
+$enemyrow[4][1]="yellowfish";
+//5
+$dungeonname[5]="闇";
+$enemyrow[5][1]="shark";
+$enemyrow[5][2]="alien";</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Enemy.tonyu' data-lastupdate='1703832819928' >x=$screenWidth/2;
 y=20+30+10+32*4;
 scaleX=4;
 
-$ezokusei=1+rnd(5);
+$ezokusei=$enemyzok[$enemies[$enemynum]];//属性
+p=$enemypic[$enemies[$enemynum]];//見た目
 
-p=$zokuseipic[$ezokusei];
-col=$zokuseicol[$ezokusei];
+col=$zokuseicol[$ezokusei];//hpバーの色
 
-$ehpmax=100+$kill*20;
+$ehpmax=$enemyhp[$enemies[$enemynum]];//hp
 $ehp=$ehpmax;
 
 while(1){
-    if ($ehp<=0){
+    if ($hp<=0){//負け
+        $end="end";
+        new Label{x:$screenWidth/2,y:$screenHeight/2-20-100,size:100,fillStyle:"#00f",text:"LOSE"};
+        $lose=new Button{top:$screenHeight/2-20+200,width:200,height:40,left:$screenWidth/2-100,fillStyle:"#C49B0B",text:"ホームへ"};
+        while($lose.clicked==0){
+        }
+        $end=0;
+        all().die();
+        $frontLayer.all(Label).die();
+        $lose.die();
+        $panel.clearRect(0,0,$screenWidth,$screenHeight);
+        new Homemanager;
+        die(); 
+    }
+    if ($ehp<=0){//敵が死んだら
         $ehp=0;
         $kill+=1;
         p=-1;//透明化
         updateEx(60);
-        new Enemy;
+        $enemynum+=1;
+        if ($enemies[$enemynum]==null){//hpがnullなら勝利
+            $end="end";
+            new Label{x:$screenWidth/2,y:$screenHeight/2-20-100,size:100,fillStyle:"#f00",text:"WIN"};
+            $win=new Button{top:$screenHeight/2-20+200,width:200,height:40,left:$screenWidth/2-100,fillStyle:"#C49B0B",text:"ホームへ"};
+            while($win.clicked==0){
+            }
+            $end=0;
+            all().die();
+            $frontLayer.all(Label).die();
+            $win.die();
+            $panel.clearRect(0,0,$screenWidth,$screenHeight);
+            new Homemanager;
+            die();
+        }
+        else{//次の敵を出す
+            new Enemy;
+        }
         die();
     }
+    //hpバー
     fillRect(x-50,y+32*2,100,20,"#555");
     fillRect(x-50,y+32*2,100*($ehp/$ehpmax),20,col);
     if ($eattack==1){//攻撃
-        $eattackdamage=1+rnd(10)+$kill*5;
+        if ($ezokusei==5 && rnd(2)==0){
+            $ball[rnd($habax)][rnd($habay)]=7;
+            $ball[rnd($habax)][rnd($habay)]=7;
+            $ball[rnd($habax)][rnd($habay)]=7;
+            $ball[rnd($habax)][rnd($habay)]=7;
+            $eattackdamage=0;
+        }
+        else{
+            $eattackdamage=$enemyatt[$enemies[$enemynum]];
+            if ($eattackdamage>$hp){
+                $eattackdamage=$hp;
+            }
+        }
         $hp-=$eattackdamage;
         $eattack=0;
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703772134385' >includes Method;
-$Screen.resize(370,700);
-$Screen.setBGColor("#000");//背景
-
-$startx=60;
-$starty=460;
-$habax=6;
-$habay=5;
-
-$scaleX=1.5;
-$haba=32*$scaleX+1;
-$habahalf=16*$scaleX;
-
-huticol="brown";
-new Actor{x:$startx-$habahalf-11,y:$starty-$habahalf-11,width:$haba*$habax+21,height:10,fillStyle:huticol,align:["left", "top"]};
-new Actor{x:$startx-$habahalf-11,y:$starty+$haba*$habay-$habahalf,width:$haba*$habax+21,height:10,fillStyle:huticol,align:["left", "top"]};
-new Actor{x:$startx-$habahalf-11,y:$starty-$habahalf-11,width:10,height:$haba*$habay+21,fillStyle:huticol,align:["left", "top"]};
-new Actor{x:$startx+$haba*$habax-$habahalf,y:$starty-$habahalf-11,width:10,height:$haba*$habay+20,fillStyle:huticol,align:["left", "top"]};
-
-$ball=new Array;
-$col=[-1,$pat_dragon+0,$pat_dragon+2,$pat_dragon+4,$pat_dragon+6,$pat_dragon+8,$pat_dragon+10,$pat_dragon+12];
-/*
-0:無
-1:赤
-2:青
-3:緑
-4:黄
-5:紫
-6:桃
-7:邪
-*/
-$scale=new Array;
-
-$p0=new Array;
-
-$queue=null;
-$sig=new Array;
-$un=new Array;
-$drop=new Array;
-
-for (i=0; i<$habax+2; i++) {//ball
-    $ball[i]=new Array;
-    for (j=-5; j<$habay+2; j++) {
-        if (i<$habax &&j<$habay){
-            $ball[i][j]=1+$Math.pow(((i+j)*(i+j)),1/2)%6;//初期$ball配置
-        }
-        else{
-            $ball[i][j]=null;
-        }
-    }
+<script language='text/tonyu' type='text/tonyu' data-filename='Enemycharacter.tonyu' data-lastupdate='1703832735282' >\enemysettei(enemyname,enemypic,enemyzok,enemyhp,enemyatt){//敵の設定をする
+    $enemypic[enemyname]=enemypic;
+    $enemyzok[enemyname]=enemyzok;
+    $enemyhp[enemyname]=enemyhp;
+    $enemyatt[enemyname]=enemyatt;
 }
 
-for (i=0; i<$habax; i++) {//配列
-    $p0[i]=new Array;
-    $sig[i]=new Array;
-    $scale[i]=new Array;
-    $un[i]=new Array;
-    $drop[i]=new Array;
-    for (j=-5; j<$habay; j++) {
-        $p0[i][j]=0;
-        $sig[i][j]=-1;
-        $scale[i][j]=$scaleX;
-        $un[i][j]=0;
-        $drop[i][j]=0;
-        new Ball{p:$col[$ball[i][j]],i,j};
-    }
-}
-
-//
-$damage=new Array;
-for (i=0; i<=6; i++) {
-    $damage[i]=0;
-}
-
-//敵
+//属性の色
 $zokuseicol=new Array;
 $zokuseicol[1]="red";
 $zokuseicol[2]="blue";
 $zokuseicol[3]="green";
 $zokuseicol[4]="yellow";
 $zokuseicol[5]="purple";
-$zokuseipic=new Array;
-$zokuseipic[1]=$pat_neko+41;
-$zokuseipic[2]=$pat_neko+40;
-$zokuseipic[3]=$pat_neko+42;
-$zokuseipic[4]=$pat_neko+43;
-$zokuseipic[5]=$pat_neko+48;
-new Enemy;
 
-$fingertime=60*10;
-$combo=0;
-$hpmax=100;
-$hp=$hpmax;
-$kill=0;
+///
+$enemypic=new Array;//敵の見た目
+$enemyzok=new Array;//敵の属性
+$enemyhp=new Array;//敵のhp
+$enemyatt=new Array;//敵の攻撃力の最大値
 
-new Label{x:$screenWidth/2,y:20,size:30,fillStyle:"yellow",text:"残り時間"};
-new Label{x:$screenWidth/2,y:20+30+10,size:30,fillStyle:"yellow",template:"$combo"+"コンボ"};
-new Label{x:$screenWidth/2,y:20+60+20,size:30,fillStyle:"red",template:"キル数:$kill"};
-new Label{x:$haba*$habax+21+15,y:$starty-$habahalf-11-55,size:30,fillStyle:"pink",template:"HP:"+"$hp",align:"right"};
+enemysettei("redfish",$pat_neko+41,1,100,10);
+enemysettei("bluefish",$pat_neko+40,2,100,10);
+enemysettei("greenfish",$pat_neko+42,3,100,10);
+enemysettei("yellowfish",$pat_neko+43,4,100,10);
+enemysettei("shark",$pat_neko+48,5,100,10);
+enemysettei("alien",$pat_sample+2,5,100,20);
 
-new Actor{x:60,y:30,p:$col[1],scaleX:2/3};
-new Actor{x:40,y:60,p:$col[2],scaleX:2/3};
-new Actor{x:80,y:60,p:$col[3],scaleX:2/3};
-new Actor{x:40,y:90,p:$col[4],scaleX:2/3};
-new Actor{x:80,y:90,p:$col[5],scaleX:2/3};
-new Label{x:73,y:43,size:15,fillStyle:"yellow",text:"︎↘︎"};
-new Label{x:60,y:60,size:15,fillStyle:"yellow",text:"←"};
-new Label{x:47,y:43,size:15,fillStyle:"yellow",text:"↗"};
-new Label{x:60,y:90,size:15,fillStyle:"yellow",text:"⇄"};
 
-$t="wait";
-while(1){
-    //残り時間
-    fillRect($screenWidth/2+60,10,60*10/6,20,"#f00");
-    fillRect($screenWidth/2+60,10,$fingertime/6,20,"#0f0");
-    //hp
-    hpset;
-    //
-    if ($t=="cal"){
-        $oticon=1;
-        $combo=0;
-        while($oticon==1){//落ち痕がある限り繰り返す
-            $oticon=0;
-        //$sigのセット
-            s=0;
-            for (j=0; j<$habay; j++) {
-                for (i=0; i<$habax; i++) {
-                    all(i,j,s);//$sigのセット
-                    s++;
-                }
-            }
-        //消すアニメーション
-            for (k=0; k<$habax*$habay; k++) {
-                cnt=0;
-                for (i=0; i<$habax; i++) {//消す
-                    for (j=0; j<$habay; j++) {
-                        if ($sig[i][j]==k){
-                            cnt++;//カウント
-                        }
-                    }
-                }
-                if (cnt>=3){//カウントが3以上ならば
-                    for (i=0; i<$habax; i++) {
-                        for (j=0; j<$habay; j++) {
-                            parallel("deleteanime",i,j);//消すアニメーション
-                        }
-                    }
-                    $oticon=1;
-                    $combo+=1;
-                    updateEx(45);//0.75秒待つ
-                }
-            }
-        //$sigのリセット・$unのセット
-            for (i=0; i<$habax; i++) {
-                for (j=-5; j<$habay; j++) {
-                    $sig[i][j]=-1;//$sigのリセット
-                    $un[i][j]=under(i,j);//$unのセット
-                }
-            }
-        //落下アニメーション
-            for (i=0; i<$habax; i++) {
-            
-                for (j=-5; j<$habay; j++) {
-                    if ($un[i][j]!=0){
-                        parallel("dropanime",i,j);//落下アニメーション
-                    }
-                }
-            }
-        //最終処理
-            for (i=0; i<$habax; i++) {
-                for (j=$habay-2; j>=-5; j--) {
-                    while($drop[i][j]!=$un[i][j]){//待機
-                    }
-                    if ($un[i][j]!=0){
-                        $ball[i][j+$un[i][j]]=$ball[i][j];
-                        if (j>=0){
-                            $ball[i][j]=0;
-                        }
-                        else{
-                            if ($kill<=1){
-                                $ball[i][j]=1+rnd(6);//新たに生成
-                            }
-                            else{
-                                $ball[i][j]=1+rnd(7);//新たに生成 
-                            }
-                        }
-                        $drop[i][j]=0;
-                    }
-                }
-            }
-        }
-        //指時間
-        $fingertime=60*10;
-        //敵にダメージ
-        for (i=1; i<=5; i++) {
-            $ehp-=$damage[i]*damagebairitu(i)*$combo;
-        }
-        //回復
-        $oldhp=$hp;
-        $hp+=$damage[6]*$combo;
-        if ($hp>$hpmax){//回復の限界
-            $hp=$hpmax;
-        }
-        $recover=$hp-$oldhp;
-        message("$recoverだけ回復した");
-        hpset;
-        updateEx(60);//1秒待つ
-        $message.die();
-        //$damageの初期化
-        for (i=0; i<=6; i++) {
-            $damage[i]=0;
-        }
-        //敵の攻撃
-        if ($ehp>0){//敵のhpが正なら(敵が生きていれば)
-            $eattack=1;
-            message("$eattackdamageのダメージを受けた");
-        }
-        while($eattack==1){
-        }
-        hpset;
-        updateEx(60);//1秒待つ
-        $message.die();
-        $t="wait";
-    }
-update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1703771615592' >//基本判定
-\sh(di,dj,si,sj){//被り無し判定
-    if (si+di>=0&&si+di<=$habax-1&&sj+dj>=0&&sj+dj<=$habay-1){//場所判定
-        return($sig[si+di][sj+dj]==-1);
-    }
-    else{
-        return(0);
-    }
-}
-
-\bh(di,dj,bi,bj){//同じ判定
-    if (bi+di>=0&&bi+di<=$habax-1&&bj+dj>=0&&bj+dj<=$habay-1){//場所判定
-        return($ball[bi][bj]==$ball[bi+di][bj+dj]);
-    }
-    else{
-        return(0);
-    }
-}
-//複合判定
-\sb(xy,pn1,pn2,sbi,sbj,sbs){//被り無し・同じ・場所判定
-    if (xy=="x"){
-        if (sh(0,0,sbi,sbj)||sh(pn1,0,sbi,sbj)||sh(pn2,0,sbi,sbj)){//被り無し
-            if(bh(pn1,0,sbi,sbj)&&bh(pn2,0,sbi,sbj)){//同じ
-                $sig[sbi][sbj]=sbs;
-                $sig[sbi+pn1][sbj]=sbs;
-                $sig[sbi+pn2][sbj]=sbs;
-                all(sbi+pn1,sbj,sbs);
-                all(sbi+pn2,sbj,sbs);
-            }
-        }
-    }
-    if (xy=="y"){
-        if (sh(0,0,sbi,sbj)||sh(0,pn1,sbi,sbj)||sh(0,pn2,sbi,sbj)){//被り無し
-            if(bh(0,pn1,sbi,sbj)&&bh(0,pn2,sbi,sbj)){//同じ
-                $sig[sbi][sbj]=sbs;
-                $sig[sbi][sbj+pn1]=sbs;
-                $sig[sbi][sbj+pn2]=sbs;
-                all(sbi,sbj+pn1,sbs);
-                all(sbi,sbj+pn2,sbs);
-            }
-        }
-    }
-}
-//全方位
-all(ai,aj,as){
-    sb("x",1,2,ai,aj,as);//x++
-    sb("x",-1,1,ai,aj,as);//x+-
-    sb("x",-2,-1,ai,aj,as);//x--
-    sb("y",1,2,ai,aj,as);//y++
-    sb("y",-1,1,ai,aj,as);//y+-
-    sb("y",-2,-1,ai,aj,as);//y--
-}
-
-//
-\deleteanime(ai,aj){//消すアニメーション
-    if ($sig[ai][aj]==k){
-        $damage[$ball[ai][aj]]+=1;
-        for (l=0; l<10; l++) {
-            $scale[ai][aj]+=0.1;
-            updateEx(1);
-        }
-        $ball[ai][aj]=0;
-        $scale[ai][aj]=$scaleX;
-    }
-}
-
-\under(ui,uj){//下に何個$ball[ui][uj+1]==0があるかを返す関数
-    if (uj==$habay-1){
-        result=0;
-    }
-    else{
-        if ($ball[ui][uj+1]==0){
-            result=under(ui,uj+1)+1;
-        }
-        else{
-            result=under(ui,uj+1);
-        }
-    }
-    return(result);
-}
-
-\dropanime(ai,aj){//落下アニメーション
-    while($drop[ai][aj]<$un[ai][aj]){
-        $drop[ai][aj]+=$un[ai][aj]/60;
-        update();
-    }
-    $drop[ai][aj]=$un[ai][aj];
-}
-
-\hpset{//hpの表示を更新する
-    $panel.clearRect(0,0,$screenWidth,$screenHeight);
-    $panel.setFillStyle("#f00");
-    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,$haba*$habax+21,20);
-    $panel.setFillStyle("pink");
-    $panel.fillRect($startx-$habahalf-11,$starty-$habahalf-11-25,($haba*$habax+21)*($hp/$hpmax),20);
-}
-
-\message(text){
-    $message=new Label{x:$screenWidth/2-150,y:$starty-$habahalf-11-55-30,size:30,fillStyle:"yellow",template:text,align:"left"};
-}
-
-\damagebairitu(di){
-    result=1;
-    if (di==1 && $ezokusei==3)result=2;
-    if (di==2 && $ezokusei==1)result=2;
-    if (di==3 && $ezokusei==2)result=2;
-    if (di==4 && $ezokusei==5)result=2;
-    if (di==5 && $ezokusei==4)result=2;
-    return(result);
-}
 </script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Homemanager.tonyu' data-lastupdate='1703825214781' >includes Homemethod;
+$Screen.setBGColor("#573929");//背景
+
+$enemies=new Array;
+$enemyrow=new Array;
+
+$dungeon=new Array;
+$dungeonname=new Array;
+
+//ダンジョンの設定
+for (i=1; i<=5; i++) {
+    $enemyrow[i]=new Array;
+}
+new Dungeons;
+update();
+for (i=1; i<=5; i++) {
+    dungeonbutton(i);
+}
+
+while(1){
+    for (i=1; i<=5; i++) {
+        if ($dungeon[i].clicked==1){
+            j=1;
+            while($enemyrow[i][j]!=null){
+                $enemies[j]=$enemyrow[i][j];
+                j++;
+            }
+            $frontLayer.all(Label).die();
+            for (k=1; k<=5; k++) {
+                $dungeon[k].die();
+            }
+            new Battlemanager;
+        }
+    }
+update();}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Homemethod.tonyu' data-lastupdate='1703824973862' >\dungeonbutton(num){
+    if (num%2==1){
+        n=(num-num%2)/2;
+        $dungeon[num]=new Button{top:170+50*n,left:$screenWidth/2-185,width:180,height:40,fillStyle:"#C49B0B",text:$dungeonname[num]};
+    }
+    else{
+        $dungeon[num]=new Button{top:170+50*n,left:$screenWidth/2+5,width:180,height:40,fillStyle:"#C49B0B",text:$dungeonname[num]};
+    }
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1703819619113' >$Screen.resize(370,700);
+$Screen.setBGColor("#573929");//背景
+
+new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:100,fillStyle:"#C49B0B",text:"パズ",font:"HGP行書体"};
+$start=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"#C49B0B",text:"START"};
+while(1){
+    if ($start.clicked==1){
+        $frontLayer.all(Label).die();
+        $start.die();
+        break;
+    }
+}
+
+new Homemanager;</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1703757044562' >
 {
@@ -500,7 +644,7 @@ all(ai,aj,as){
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703772144374' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1703832963237' >
 {
     "images": [
         {
@@ -534,10 +678,45 @@ all(ai,aj,as){
             "url": "ls:images/dragon.png",
             "pwidth": 32,
             "pheight": 32
+        },
+        {
+            "type": "single",
+            "name": "$pat_aishou",
+            "url": "ls:images/aishou.png"
         }
     ],
     "sounds": []
 }</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/aishou.png' data-wrap='80' data-lastupdate='1703813175141' >data:image/png;base64,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\
+AAAABJRU5ErkJggg==
+</script>
 
 <script language='text/tonyu' type='text/tonyu' data-filename='images/dragon.png' data-wrap='80' data-lastupdate='1703769984804' >data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAADwCAYAAADPXrIfAAAABGdBTUEAAL\
 GPC/xhBQAAAAlwSFlzAAAWJQAAFiUBSVIk8AAADsRJREFUeF7t3U+oHlcZx/H3BgRdNKXUUKUFodwsCi\
