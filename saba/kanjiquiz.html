@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="icon" href="https://ucbright2656.github.io/UCB_games/picture/op_logo3.png">
+<title>Optimus Games</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Kanji.tonyu' data-lastupdate='1705627827353' >extends Label;
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Kanjiinfo.tonyu' data-lastupdate='1705658092509' >$kanji=new Array;
+$kanjipic=new Array;
+
+$kanji[1]=new Array;
+$kanji[2]=new Array;
+$kanji[3]=new Array;
+$kanji[4]=new Array;
+$kanjipic[1]=new Array;
+$kanjipic[2]=new Array;
+$kanjipic[3]=new Array;
+$kanjipic[4]=new Array;
+
+//レベル1/魚介
+//33種
+$kanji[1]=["アジ","イワシ","サケ","マグロ","カツオ",
+"タラ","クジラ","サンマ","フグ","アユ",
+"アワビ","サワラ","アンコウ","イカ","タコ",
+"ウナギ","エビ","カニ","カキ","カレイ",
+"コイ","シャコ","シラウオ","タイ","タチウオ",
+"ナマズ","ニシン","ハマグリ","ヒトデ","ヒラメ",
+"ブリ","ハモ","フカ"];
+$kanjipic[1]=["鯵","鰯","鮭","鮪","鰹",
+"鱈","鯨","秋刀魚","河豚","鮎",
+"鮑","鰆","鮟鱇","烏賊","蛸",
+"鰻","蝦","蟹","牡蠣","鰈",
+"鯉","蝦蛄","白魚","鯛","太刀魚",
+"鯰","鰊","蛤","海星","鮃",
+"鰤","鱧","鱶"];
+
+//レベル2/樹木
+//36種
+$kanji[2]=["アオギリ","アズサ","アンズ","ウメ","エノキ",
+"カキ","カシワ","カツラ","カバ","ワタ",
+"キリ","ユズ","ダイダイ","ツバキ","トチ",
+"ナシ","ヒイラギ","ヒノキ","クチナシ","クリ",
+"クワ","ケヤキ","スモモ","サカキ","サクラ",
+"ヤナギ","シイ","スギ","タチバナ","ブナ",
+"ホオ","マツ","モモ","セン"
+,"クスノキ"];
+$kanjipic[2]=["梧","梓","杏","梅","榎",
+"柿","柏","桂","樺","綿",
+"桐","柚","橙","椿","栃",
+"梨","柊","檜","桅","栗",
+"桑","欅","李","榊","桜",
+"柳","椎","杉","橘","橅",
+"朴","松","桃","栓","楮",
+"楠"];
+
+//レベル3/鳥類
+//45種
+$kanji[3]=["アヒル","カモ","カラス","ハト","スズメ",
+"ニワトリ","ウ","ウズラ","カリ","キジ",
+"コウノトリ","サギ","タカ","ワシ","ツバメ",
+"ツグミ","ツル","ハヤブサ","フクロウ","ミサゴ",
+"インコ","オウム","カッコウ","ガチョウ","カモメ",
+"カナリア","カワセミ","キツツキ","キュウカンチョウ","ヒクイドリ",
+"クジャク","シジュウカラ","シャモ","ジュウシマツ","ダチョウ",
+"トキ","トンビ","ハクチョウ","ホトトギス","ホウオウ",
+"ムクドリ","メジロ","モズ","ヤマガラ","ライチョウ"];
+$kanjipic[3]=["家鴨","鴨","烏","鳩","雀",
+"鶏","鵜","鶉","雁","雉",
+"鸛","鷺","鷹","鷲","燕",
+"鶫","鶴","隼","梟","鶚",
+"鸚哥","鸚鵡","郭公","鵞鳥","鴎",
+"金糸雀","翡翠","啄木鳥","九官鳥","火食鳥",
+"孔雀","四十雀","軍鶏","十姉妹","駝鳥",
+"朱鷺","鳶","白鳥","時鳥","鳳凰",
+"椋鳥","目白","百舌","山雀","雷鳥"];
+
+//レベル4/国(略称)
+//36種
+$kanji[4]=["ジャパン","コリア","チャイナ","カナダ","アメリカ",
+"メキシコ","ブラジル","スペイン","ポルトガル","フランス",
+"アイルランド","イギリス","オランダ","ベルギー","ドイツ",
+"イタリア","ポーランド","フィンランド","オーストリア","ハンガリー",
+"ギリシャ","トルコ","ロシア","モンゴル","ベトナム",
+"フィリピン","タイ","インドネシア","インド","シンガポール",
+"エジプト","オーストラリア","ウクライナ","ルーマニア","ミャンマー",
+"ラオス"];
+$kanjipic[4]=["日","韓","中","加","米",
+"墨","伯","西","葡","仏",
+"愛","英","蘭","白","独",
+"伊","波","芬","墺","洪",
+"希","土","露","蒙","越",
+"比","泰","尼","印","星",
+"埃","豪","宇","羅","緬"
+,"老"];
+
+
+
+
+
+
+
+
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1705658105121' >includes Problem;
+
+new Kanjiinfo;
+
+$Screen.setBGColor("#BA3B85");//背景
+
+$highscoreFile=new Array;
+$highscore=new Array;
+
+$highscoreFile[1]=file("kanjigamehighscorelevel11.json");
+$highscoreFile[2]=file("kanjigamehighscorelevel22.json");
+$highscoreFile[3]=file("kanjigamehighscorelevel33.json");
+$highscoreFile[4]=file("kanjigamehighscorelevel44.json");
+
+for (level=1; level<=4; level++) {
+    if ($highscoreFile[level].exists()) {
+        $highscore[level]=$highscoreFile[level].obj();
+    } else {
+        $highscore[level]=0;
+    }
+}
+
+new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:90,fillStyle:"#42AB17",text:"漢字クイズ",font:"ＭＳ ゴシック"};
+$start=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"#42AB17",text:"開始"};
+
+$ansbut=new Array;
+
+$maxcnt=new Array;
+$maxcnt[1]=10;
+$maxcnt[2]=10;
+$maxcnt[3]=10;
+$maxcnt[4]=10;
+
+$hen=new Array;
+$hen[1]="魚介編";
+$hen[2]="樹木編";
+$hen[3]="鳥類編";
+$hen[4]="国(略称)編";
+
+$sit="start";
+$mode="first";
+while(1){
+    while($sit=="start" || $sit=="restart"){
+        if ($start.clicked==1 || $sit=="restart"){
+            $sit="levelselect";
+            $frontLayer.all().die();
+            $levelbutton=new Array;
+            for (i=0; i<4; i++) {
+                $levelbutton[i]=new Button{top:i*100+50,width:200,height:40,left:$screenWidth/2-100,fillStyle:"yellow",text:$hen[i+1]};
+            }
+        }
+    }
+
+    while($sit=="levelselect"){
+        for (i=0; i<4; i++) {
+            if ($levelbutton[i].clicked==1){
+                $sit=i+1;
+                $frontLayer.all().die();
+            }
+        }
+    }
+    
+    for (level=1; level<=4; level++) {
+        while($sit==level){
+            if ($mode=="first"){//最初
+                $score=0;
+                $scorelabel=new Label{x:$screenWidth/2,y:$screenHeight/2-200,size:30,fillStyle:"#000",template:"$score",layer:$mainLayer};
+                cnt=0;
+                problem(level);
+                $mode="think";
+            }
+            while($mode=="think"){//考え中
+                for (i=1; i<=4; i++) {
+                    if ($ansbut[i].clicked==1){
+                        if ($answer==i){
+                            $score+=1;
+                        }
+                        $frontLayer.all().die();
+                        cnt+=1;
+                        if (cnt>=$maxcnt[level])$mode="result";
+                        if (cnt<=$maxcnt[level]-1)problem(level);
+                    }
+                }
+            }
+        
+            while($mode=="result"){//結果
+                if (cnt==$maxcnt[level]){
+                    $scorelabel.die();
+                    if ($highscore[level]<=$score){
+                        $highscore[level]=[$score];
+                        $highscoreview=$highscore[level];
+                        $highscoreFile[level].obj($highscoreview);
+                    }
+                    $highscoreview=$highscore[level];
+                    $scorelabel=new Label{x:$screenWidth/2+20,y:$screenHeight/2-100,size:50,fillStyle:"red",template:"スコア:$score",layer:$mainLayer};
+                    $highscorelabel=new Label{x:$screenWidth/2-50+20,y:$screenHeight/2,size:50,fillStyle:"red",template:"ハイスコア:$highscoreview",layer:$mainLayer};
+                    $restart=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:5,fillStyle:"green",text:"もう一回"};
+                    $tweet=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:235,fillStyle:"blue",text:"Xに投稿する"};
+                    cnt=0;
+                }
+                if ($restart.clicked==1){
+                    $scorelabel.die();
+                    $highscorelabel.die();
+                    $restart.die();
+                    $tweet.die();
+                    $sit="restart";
+                    $mode="first";
+                }
+                if ($tweet.clicked==1){
+                    $WebPage.openShareTweet("漢字クイズ"+$hen[$sit]+"のハイスコア:"+$highscore[$sit], "https://ucbright2656.github.io/UCB_games/", "オプゲー,オプイン,漢字クイズ");
+                }
+            }
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Problem.tonyu' data-lastupdate='1705628386659' >\shuffle(a,b){//追加するシンボルをシャッフルする
+    for (s=0; s<2000; s++) {
+        r1=rnd(a.length);
+        r2=rnd(a.length);
+        wk1=a[r1];
+        wk2=b[r1];
+        a[r1]=a[r2];
+        a[r2]=wk1;
+        b[r1]=b[r2];
+        b[r2]=wk2;
+    }
+}
+
+\problem(level){
+    shuffle($kanji[level],$kanjipic[level]);
+    $answer=rnd(4)+1;
+    new Kanji{x:$screenWidth/2,y:$screenHeight/2-50,scaleX:4,text:$kanjipic[level][$answer],size:150,layer:$frontLayer};
+    $ansbut[1]=new Button{top:$screenHeight/2-20+150,width:220,height:40,left:5,fillStyle:"red",text:$kanji[level][1]};
+    $ansbut[2]=new Button{top:$screenHeight/2-20+150,width:220,height:40,left:235,fillStyle:"red",text:$kanji[level][2]};
+    $ansbut[3]=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:5,fillStyle:"red",text:$kanji[level][3]};
+    $ansbut[4]=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:235,fillStyle:"red",text:$kanji[level][4]};
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1705622061862' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1705658201238' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32
+        }
+    ],
+    "sounds": []
+}</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
