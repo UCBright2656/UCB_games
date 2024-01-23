@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="icon" href="https://ucbright2656.github.io/UCB_games/picture/op_logo3.png">
+<title>Optimus Games</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Card.tonyu' data-lastupdate='1705974073580' >p=$pat_card1+54;
+
+while(1){
+    if (state=="new"){
+        if (first!="notfirst"){
+            tox=$screenWidth/2-160+3*80;
+            toy=$screenHeight/2;
+            x=fromx;
+            y=fromy;
+            first="notfirst";
+        }
+        if (first=="notfirst"){
+            x+=(tox-fromx)/60;
+            y+=(toy-fromy)/60;
+            if (x<=tox+1 && x>=tox-1){
+                state=3;
+                $sit="judge";
+            }
+        }
+    }
+    
+    
+    for (i=1; i<=3; i++) {
+        if (state==i){
+            p=$pat_card1+num-1;
+            x=$screenWidth/2-160+i*80-$dx;
+            y=$screenHeight/2;
+            $card[i]=num;
+            if ($dx==80){
+                state-=1;
+            }
+        }
+    }
+    
+    if (state==0){
+        p=$pat_card1+54;
+    }
+
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1705984748862' >includes Method;
+$Screen.setBGColor("green");//背景
+
+$highscoreFile=file("4cardscore.json");
+
+if ($highscoreFile.exists()) {
+    $highscore=$highscoreFile.obj();
+} else {
+    $highscore=0;
+}
+
+new Label{x:$screenWidth/2,y:$screenHeight/2-100,size:90,fillStyle:"#000",text:"４かど",font:"ＭＳ ゴシック"};
+$start=new Button{top:$screenHeight/2-20+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"lime",text:"開始"};
+
+while(1){
+    if ($start.clicked==1){
+        $sit="start";
+        $start.die();
+        $frontLayer.all().die();
+    }
+    if ($sit=="start"){
+        //ゲーム本体
+        $gameover=0;
+        
+        $trump=new Array;
+
+        for (i=1; i<=54; i++) {
+            $trump[i]=i;
+        }
+
+        for (i=0; i<2000; i++) {
+            r1=rnd(54)+1;
+            r2=rnd(54)+1;
+            wk=$trump[r1];
+            $trump[r1]=$trump[r2];
+            $trump[r2]=wk;
+        }
+
+
+        $yama=new Array;
+        for (i=0; i<4; i++) {
+            new Yamahuda{n:i};
+            $yama[i]=new Array;
+            for (j=1; j<=13; j++) {
+                $yama[i][j]=$trump[i*13+j];
+            }
+        }
+    
+        new Card{num:$trump[53],state:1};
+        new Card{num:$trump[54],state:2};
+
+        $card=new Array;
+
+        $sit="wait";
+        $turn="myturn";
+        $mytouchable="ok";
+        $NPCtouchable="no";
+
+        $dx=0;
+
+        $myscore=0;
+        $NPCscore=0;
+        new Label{x:$screenWidth/2+80,y:0,size:30,fillStyle:"#000",align:"right",template:"$Tturn"};
+        new Label{x:$screenWidth/2+80,y:30,size:30,fillStyle:"#000",align:"right",template:"yourscore:$myscore"};
+        new Label{x:$screenWidth/2+80,y:60,size:30,fillStyle:"#000",align:"right",template:"NPCscore:$NPCscore"};
+        new Label{x:$screenWidth/2+80,y:90,size:30,fillStyle:"#000",align:"right",template:"score:$score"};
+        new Message{text:"yourturn",fillStyle:"blue"};
+        
+        //ここからループ
+        while($gameover<4){
+            
+            $score=$myscore-$NPCscore;
+            if ($score<0)$score=0;
+            
+            if ($turn=="myturn"){
+                $Tturn="yourturn";
+            }
+            else{
+                $Tturn="NPCturn";
+            }
+    
+            if ($sit=="judge"){
+                if ($turn=="myturn"){
+                    if (number($card[3])=="joker"){
+                        new Message{text:"ｼﾞｮｰｶｰ+7p",fillStyle:"blue",under:1};
+                        $myscore+=7;
+                    }
+                    if (flash($card[1],$card[2],$card[3]) && straight($card[1],$card[2],$card[3])){
+                        new Message{text:"ｽﾄﾚｰﾄﾌﾗｯｼｭ+25p",fillStyle:"blue",under:1};
+                        $myscore+=25;
+                    }
+                    else{
+                        if (flash($card[1],$card[2],$card[3])){
+                            new Message{text:"ﾌﾗｯｼｭ+2p",fillStyle:"blue",under:1};
+                            $myscore+=2;
+                        }
+                        if (straight($card[1],$card[2],$card[3])){
+                            new Message{text:"ｽﾄﾚｰﾄ+5p",fillStyle:"blue",under:1};
+                            $myscore+=5;
+                        }
+                        if (three($card[1],$card[2],$card[3])){
+                            new Message{text:"ｽﾘｰｶｰﾄﾞ+10p",fillStyle:"blue",under:1};
+                            $myscore+=10;
+                        }
+                    }
+                }
+                else{
+                    if (number($card[3])=="joker"){
+                        new Message{text:"ｼﾞｮｰｶｰ+7p",fillStyle:"red",under:1};
+                        $NPCscore+=7;
+                    }
+                    if (flash($card[1],$card[2],$card[3]) && straight($card[1],$card[2],$card[3])){
+                        new Message{text:"ｽﾄﾚｰﾄﾌﾗｯｼｭ+25p",fillStyle:"red",under:1};
+                        $NPCscore+=25;
+                    }
+                    else{
+                        if (flash($card[1],$card[2],$card[3])){
+                            new Message{text:"ﾌﾗｯｼｭ+2p",fillStyle:"red",under:1};
+                            $NPCscore+=2;
+                        }
+                        if (straight($card[1],$card[2],$card[3])){
+                            new Message{text:"ｽﾄﾚｰﾄ+5p",fillStyle:"red",under:1};
+                            $NPCscore+=5;
+                        }
+                        if (three($card[1],$card[2],$card[3])){
+                            new Message{text:"ｽﾘｰｶｰﾄﾞ+10p",fillStyle:"red",under:1};
+                            $NPCscore+=10;
+                        }
+                    }
+                }
+                $sit="flow";
+                $dx=0;
+            }
+            if ($sit=="flow"){
+                $dx+=1;
+                if($dx==80){
+                    update();
+                    $dx=0;
+                    $sit="wait";
+                    if ($gameover==4)$sit="gameover";
+                    if ($gameover<4){
+                        if ($turn=="myturn"){
+                            $turn="NPCturn";
+                            new Message{text:"NPCturn",fillStyle:"red"};
+                            $NPCtouchable="ok";
+                        }
+                        else{
+                            $turn="myturn";
+                            new Message{text:"yourturn",fillStyle:"blue"};
+                            $mytouchable="ok";
+                        }
+                    }
+                }
+            }
+    
+            if ($turn=="NPCturn" && $NPCtouchable=="ok"){
+                $NPCpush=rnd(4);
+            }
+        update();}
+        updateEx(60*2);
+        if ($gameover==4)$sit="gameover";
+    }
+    
+    if ($sit=="gameover"){
+        if ($highscore<=$score){
+            $highscore=[$score];
+            $highscoreview=$highscore;
+            $highscoreFile.obj($highscoreview);
+        }
+        $highscoreview=$highscore;
+        $scorelabel=new Label{x:$screenWidth/2+20,y:$screenHeight/2-80,size:50,fillStyle:"#f00",template:"スコア:$score",layer:$mainLayer};
+        $highscorelabel=new Label{x:$screenWidth/2-50+20,y:$screenHeight/2+60,size:50,fillStyle:"#f00",template:"ハイスコア:$highscoreview",layer:$mainLayer};
+        $restart=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:10,fillStyle:"lime",text:"もう一回"};
+        $tweet=new Button{top:$screenHeight/2-20+200,width:220,height:40,left:240,fillStyle:"blue",text:"Xに投稿する"};
+        
+        while($sit=="gameover"){
+            if ($restart.clicked==1){
+                $scorelabel.die();
+                $highscorelabel.die();
+                $restart.die();
+                $tweet.die();
+                $gameover=0;
+                all(Card).die();
+                $frontLayer.all(Label).die();
+                $sit="start";
+            }
+            if ($tweet.clicked==1){
+                $WebPage.openShareTweet("４かどのハイスコア:"+$highscore, "https://ucbright2656.github.io/UCB_games/", "オプゲー,オプイン,４かど");
+            }
+        update();}
+    }
+}
+
+
+
+
+
+
+
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Message.tonyu' data-lastupdate='1705983953685' >extends Label;
+x=$screenWidth/2;
+y=$screenHeight/2-80;
+
+if (under==1){
+    y=$screenHeight/2+100;
+}
+size=50;
+
+for (i=0; i<60*2; i++){
+    update();
+}
+die();</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Method.tonyu' data-lastupdate='1705983534097' >\pattern(n){
+    if (n>=53){
+        result="joker";
+    }
+    else{
+        m=n-1;
+        result=(m-m%13)/13;//0:スペード,1:クラブ,2:ハート,3:ダイヤ
+    }
+    return(result);
+}
+
+\number(n){
+    if (n>=53){
+        result="joker";
+    }
+    else{
+        result=(n-1)%13+1;
+    }
+    return(result);
+}
+
+\flash(a,b,c){
+    if (pattern(a)==pattern(b) && pattern(a)==pattern(c))result=1;
+    else result=0;
+    return(result);
+}
+
+\st(a,b,c){
+    if (a-b==1 && b-c==1)result=1;
+    else result=0;
+    return(result);
+}
+
+\straight(a,b,c){
+    na=number(a);
+    nb=number(b);
+    nc=number(c);
+    result=(st(na,nb,nc)||st(na,nc,nb)||st(nb,na,nc)||st(nb,nc,na)||st(nc,na,nb)||st(nc,nb,na));
+    return(result);
+}
+
+\three(a,b,c){
+    if (number(a)==number(b) && number(a)==number(c))result=1;
+    else result=0;
+    return(result);
+}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Yamahuda.tonyu' data-lastupdate='1705984781120' >p=$pat_card1+54;
+nx=n%2;
+ny=(n-nx)/2%2;
+x=(1/6+(2/3)*nx)*$screenWidth;
+y=(1/6+(2/3)*ny)*$screenHeight;
+
+mai=1;
+while(1){
+    if ($mytouchable=="ok" && findTouch(1)){
+        $mytouchable="no";
+        new Card{num:$yama[n][mai],state:"new",fromx:x,fromy:y};
+        mai+=1;
+        if (mai==14){
+            $gameover+=1;
+            die();
+        }
+    }
+    
+    if ($NPCtouchable=="ok" && $NPCpush==n){
+        $NPCtouchable="no";
+        new Card{num:$yama[n][mai],state:"new",fromx:x,fromy:y};
+        mai+=1;
+        if (mai==14){
+            $gameover+=1;
+            die();
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1705723279183' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1705984798576' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "type": "wh",
+            "name": "$pat_card1",
+            "url": "ls:images/card1.png",
+            "pwidth": 40,
+            "pheight": 55
+        }
+    ],
+    "sounds": []
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/card1.png' data-wrap='80' data-lastupdate='1705983157769' >data:image/png;base64,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
+</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
