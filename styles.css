@@ -173,29 +173,27 @@ footer {
 }
 
 /*追加*/
-.slide {
-  position: relative;
-  overflow: hidden;
-  /*width: 1200px;*/
-  /*height: 900px;*/
-  margin: auto;
-  background: #fff;
+/* スライドショーのコンテナ */
+.slideshow-container {
+    max-width: 600px;
+    position: relative;
+    margin: auto;
 }
+
+/* スライドにフェードイン/フェードアウトのアニメーションを適用 */
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+}
+
+/* 画像のスタイル */
 .slide img {
-  display: block;
-  position: absolute;
-  width: inherit;
-  height: inherit;
-  left: 100%;
-  animation: slide-anime 3s ease infinite;
-}
-.slide img:nth-of-type(1) {animation-delay: 0s;}
-.slide img:nth-of-type(2) {animation-delay: 3s;}
- 
-@keyframes slide-anime{
-  0% {left: 100%;}
-  2% {left: 0;}
-  18% {left: 0;}
-  20% {left: -100%;}
-  100% {left: -100%;}
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
 }
