@@ -173,27 +173,4 @@ footer {
 }
 
 /*追加*/
-/* スライドショーのコンテナ */
-.slideshow-container {
-    max-width: 600px;
-    position: relative;
-    margin: auto;
-}
 
-/* スライドにフェードイン/フェードアウトのアニメーションを適用 */
-.fade {
-    animation-name: fade;
-    animation-duration: 1.5s;
-}
-
-@keyframes fade {
-    from {opacity: .4}
-    to {opacity: 1}
-}
-
-/* 画像のスタイル */
-.slide img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-}
