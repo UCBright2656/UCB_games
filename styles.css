@@ -204,7 +204,7 @@ footer {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  height: auto;
+  height: 800px;
   opacity: 0;
   animation :slideshow 24s linear infinite;
 }
