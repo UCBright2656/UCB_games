@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Checklabel.tonyu' data-lastupdate='1721086883244' >extends Label;
+includes Mainmanager;
+
+x=z(i)+12;
+y=z(j)-18;
+size=18;
+fillStyle="green";
+
+while(1){
+    text=$tile[i][j];
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Clabel.tonyu' data-lastupdate='1721135512918' >extends Label;
+
+includes Mainmanager;
+
+x=z(11)+12;
+size=20;
+
+
+while(1){
+    if ($select==1){
+        text="Cで選択を解除";
+    }
+    else text="";
+    
+    if ($turn==1){
+        y=z(5);
+        fillStyle="orange";
+    }
+    else{
+        y=z(3);
+        fillStyle="green";
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Enkoma.tonyu' data-lastupdate='1721086885678' >includes Mainmanager;
+\red(di,dj){
+    if (s(i+di,j+dj) && $tile[i+di][j+dj]>=0){
+        $tilecolor[i+di][j+dj]=1;
+    }
+}
+
+\kin{
+    red(1,1);//左前
+    red(0,1);//前
+    red(-1,1);//右前
+    red(1,0);//左
+    red(-1,0);//右
+    red(0,-1);//後
+}
+
+\kaku{
+    for (k=1; k<$haba; k++) {//右下に∞
+        if (s(i-k,j-k)==0 || $tile[i-k][j-k]<0)break;//駒があったら✖
+        red(-k,-k);
+        if (s(i-k,j-k)==0 || $tile[i-k][j-k]>0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//左下に∞
+        if (s(i+k,j-k)==0 || $tile[i+k][j-k]<0)break;//駒があったら✖
+        red(k,-k);
+        if (s(i+k,j-k)==0 || $tile[i+k][j-k]>0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//右上に∞
+        if (s(i-k,j+k)==0 || $tile[i-k][j+k]<0)break;//駒があったら✖
+        red(-k,k);
+        if (s(i-k,j+k)==0 || $tile[i-k][j+k]>0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//左上に∞
+        if (s(i+k,j+k)==0 || $tile[i+k][j+k]<0)break;//駒があったら✖
+        red(k,k);
+        if (s(i+k,j+k)==0 || $tile[i+k][j+k]>0)break;//駒があったら✖
+    }
+}
+
+\hisha{
+    for (kj=1; kj<$habay; kj++) {//後に∞
+        if (s(i,j-kj)==0 || $tile[i][j-kj]<0)break;//駒があったら✖
+        red(0,-kj);
+        if (s(i,j-kj)==0 || $tile[i][j-kj]>0)break;//駒があったら✖
+    }
+    for (kj=1; kj<$habay; kj++) {//前に∞
+        if (s(i,j+kj)==0 || $tile[i][j+kj]<0)break;//駒があったら✖
+        red(0,kj);
+        if (s(i,j+kj)==0 || $tile[i][j+kj]>0)break;//駒があったら✖
+    }
+    for (ki=1; ki<$habax; ki++) {//右に∞
+        if (s(i-ki,j)==0 || $tile[i-ki][j]<0)break;//駒があったら✖
+        red(-ki,0);
+        if (s(i-ki,j)==0 || $tile[i-ki][j]>0)break;//駒があったら✖
+    }
+    for (ki=1; ki<$habax; ki++) {//左に∞
+        if (s(i+ki,j)==0 || $tile[i+ki][j]<0)break;//駒があったら✖
+        red(ki,0);
+        if (s(i+ki,j)==0 || $tile[i+ki][j]>0)break;//駒があったら✖
+    }
+}
+
+\ou{
+    red(1,1);//左前
+    red(0,1);//前
+    red(-1,1);//右前
+    red(1,0);//左
+    red(-1,0);//右
+    red(1,-1);//左後
+    red(0,-1);//後
+    red(-1,-1);//右後
+}
+///
+x=z(i);
+y=z(j);
+p=$pat_koma+$pic[-t-1];
+rotation=180;
+
+while(1){
+    if ($tile[i][j]==0){
+        die();
+    }
+    if ($turn==-1 && $tegoma==0){
+        switch (t){
+            case -1:
+            if (findTouch(1) && $select==0){//歩
+                $select=1;
+                $te=[i,j];
+                red(0,1);//前
+            }
+            break;
+            case -2:
+            if (findTouch(1) && $select==0){//香車
+                $select=1;
+                $te=[i,j];
+                for (kj=1; kj<$habay; kj++) {//前に∞
+                    if ($tile[i][j+kj]<0)break;//駒があったら✖
+                    red(0,kj);
+                    if ($tile[i][j+kj]>0)break;//駒があったら✖
+                }
+            }
+            break;
+            case -3:
+            if (findTouch(1) && $select==0){//桂馬
+                $select=1;
+                $te=[i,j];
+                red(1,2);//左前
+                red(-1,2);//右前
+            }
+            break;
+            case -4:
+            if (findTouch(1) && $select==0){//銀
+                $select=1;
+                $te=[i,j];
+                red(1,1);//左前
+                red(0,1);//前
+                red(-1,1);//右前
+                red(1,-1);//左後
+                red(-1,-1);//右後
+            }
+            break;
+            case -5:
+            if (findTouch(1) && $select==0){//金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case -6:
+            if (findTouch(1) && $select==0){//角
+                $select=1;
+                $te=[i,j];
+                kaku;
+            }
+            break;
+            case -7:
+            if (findTouch(1) && $select==0){//飛車
+                $select=1;
+                $te=[i,j];
+                hisha;
+            }
+            break;
+            case -8:
+            if (findTouch(1) && $select==0){//王
+                $select=1;
+                $te=[i,j];
+                ou;
+            }
+            break;
+            case -9:
+            if (findTouch(1) && $select==0){//と金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case -10:
+            if (findTouch(1) && $select==0){//香金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case -11:
+            if (findTouch(1) && $select==0){//桂金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case -12:
+            if (findTouch(1) && $select==0){//銀金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case -13:
+            if (findTouch(1) && $select==0){//馬
+                $select=1;
+                $te=[i,j];
+                kaku;
+                ou;
+            }
+            break;
+            case -14:
+            if (findTouch(1) && $select==0){//竜
+                $select=1;
+                $te=[i,j];
+                hisha;
+                ou;
+                break;
+            }
+        }
+    }
+    
+update();}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Entegoma.tonyu' data-lastupdate='1721086889310' >includes Mainmanager;
+\red(ki,kj){
+    if (s(ki,kj) && $tile[ki][kj]==0){
+        $tilecolor[ki][kj]=1;
+    }
+}
+
+\tegomaoku(t){
+    if (findTouch(1) && $select==0 && $entegoma[t-1]>=1){
+        $tegoma=-t;
+        for (ki=0; ki<$habax; ki++) {
+            for (kj=0; kj<$habay; kj++) {
+                r=0;
+                if (t==1){//二歩対策
+                    for (kkj=0; kkj<$habay; kkj++) {
+                        r+=($tile[ki][kkj]==-1);
+                    }
+                }
+                if (r==0)red(ki,kj);
+            }
+        }
+    }
+}
+
+///
+switch (j){
+    case 2:
+    t=i-9;
+    break;
+    case 1:
+    t=i-6;
+    break;
+    case 0:
+    t=i-4;
+    break;
+}
+x=z(i);
+y=z(j);
+p=$pat_koma+$pic[t-1];
+rotation=180;
+
+while(1){
+    if ($turn==-1){
+        tegomaoku(t);
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1721135276797' >
+\start{
+    all(Mainmanager).die();
+    all(Mykoma).die();
+    all(Mytegoma).die();
+    all(Enkoma).die();
+    all(Entegoma).die();
+    all(Tetile).die();
+    all(Tile).die();
+    $frontLayer.all(Checklabel).die();
+    $frontLayer.all(Numlabel).die();
+    $frontLayer.all(Turnlabel).die();
+    $frontLayer.all(Winnerlabel).die();
+    $frontLayer.all(Plabel).die();
+    $frontLayer.all(Clabel).die();
+}
+
+$Screen.setBGColor("#573929");//背景
+$Screen.resize(650,450);
+
+new Titlelabel;
+$start=new Button{top:$screenHeight/2+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"orange",text:"開始"};
+$winner=0;
+                            
+while(1){
+    if ($start.clicked==1){
+        start;
+        $start.die();
+        $frontLayer.all(Titlelabel).die();
+        new Mainmanager;
+    }
+    
+    if ($turn==2){
+        $turn=3;
+        $start=new Button{top:$screenHeight/2+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"yellow",text:"始めから"};
+        new Winnerlabel;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mainmanager.tonyu' data-lastupdate='1721135270828' >\z(k){
+    return(30+k*49);
+}
+
+\s(i,j){
+    return(i>=0&&i<$habax&&j>=0&&j<$habay);
+}
+
+\mykoma(i,j,t){
+    $tile[i][j]=t;
+    new Mykoma{i,j,t};
+}
+
+\enkoma(i,j,t){
+    $tile[i][j]=t;
+    new Enkoma{i,j,t};
+}
+
+\mytegoma(i,j){
+    new Tetile{x:z(i),y:z(j),scaleX:1.5,scaleY:1.5};
+    new Mytegoma{i,j};
+    new Numlabel{f:"m",i,j};
+}
+
+\entegoma(i,j){
+    new Tetile{x:z(i),y:z(j),scaleX:1.5,scaleY:1.5};
+    new Entegoma{i,j};
+    new Numlabel{f:"e",i,j};
+}
+
+///
+new Plabel{f:1};
+new Plabel{f:2};
+new Clabel;
+
+$pic=[0,1,2,3,4,5,6,8,9,10,11,12,13,14];
+
+$habax=9;
+$habay=9;
+$haba=max($habax,$habay);
+
+$tile=new Array;
+$tilecolor=new Array;
+
+$mytegoma=[0,0,0,0,0,0,0];
+$entegoma=[0,0,0,0,0,0,0];
+
+for (i=0; i<$habax; i++) {
+    $tile[i]=new Array;
+    $tilecolor[i]=new Array;
+    for (j=0; j<$habay; j++) {
+        new Tile{i,j,x:z(i),y:z(j),scaleX:1.5,scaleY:1.5};
+        //new Checklabel{i,j};//開発中はonにする
+        $tile[i][j]=0;
+        $tilecolor[i][j]=0;
+    }
+}
+
+mytegoma(10,6);
+mytegoma(11,6);
+mytegoma(12,6);
+mytegoma(10,7);
+mytegoma(11,7);
+mytegoma(10,8);
+mytegoma(11,8);
+
+entegoma(10,2);
+entegoma(11,2);
+entegoma(12,2);
+entegoma(10,1);
+entegoma(11,1);
+entegoma(10,0);
+entegoma(11,0);
+
+///
+for (i=0; i<$habax; i++) {
+    mykoma(i,6,1);
+}
+
+mykoma(0,8,2);
+mykoma(8,8,2);
+
+mykoma(1,8,3);
+mykoma(7,8,3);
+
+mykoma(2,8,4);
+mykoma(6,8,4);
+
+mykoma(3,8,5);
+mykoma(5,8,5);
+
+mykoma(1,7,6);
+mykoma(7,7,7);
+
+mykoma(4,8,8);
+///
+for (i=0; i<$habax; i++) {
+    enkoma(i,2,-1);
+}
+
+enkoma(0,0,-2);
+enkoma(8,0,-2);
+
+enkoma(1,0,-3);
+enkoma(7,0,-3);
+
+enkoma(2,0,-4);
+enkoma(6,0,-4);
+
+enkoma(3,0,-5);
+enkoma(5,0,-5);
+
+enkoma(7,1,-6);
+enkoma(1,1,-7);
+
+enkoma(4,0,-8);
+///
+new Turnlabel;
+$select=0;
+$turn=1;
+$tegoma=0;
+$naruhantei=0;</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mykoma.tonyu' data-lastupdate='1721086891971' >includes Mainmanager;
+\red(di,dj){
+    if (s(i+di,j+dj) && $tile[i+di][j+dj]<=0){
+        $tilecolor[i+di][j+dj]=1;
+    }
+}
+
+\kin{
+    red(-1,-1);//左前
+    red(0,-1);//前
+    red(1,-1);//右前
+    red(-1,0);//左
+    red(1,0);//右
+    red(0,1);//後
+}
+
+\kaku{
+    for (k=1; k<$haba; k++) {//左上に∞
+        if (s(i-k,j-k)==0 || $tile[i-k][j-k]>0)break;//駒があったら✖
+        red(-k,-k);
+        if (s(i-k,j-k)==0 || $tile[i-k][j-k]<0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//右上に∞
+        if (s(i+k,j-k)==0 || $tile[i+k][j-k]>0)break;//駒があったら✖
+        red(k,-k);
+        if (s(i+k,j-k)==0 || $tile[i+k][j-k]<0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//左下に∞
+        if (s(i-k,j+k)==0 || $tile[i-k][j+k]>0)break;//駒があったら✖
+        red(-k,k);
+        if (s(i-k,j+k)==0 || $tile[i-k][j+k]<0)break;//駒があったら✖
+    }
+    for (k=1; k<$haba; k++) {//右下に∞
+        if (s(i+k,j+k)==0 || $tile[i+k][j+k]>0)break;//駒があったら✖
+        red(k,k);
+        if (s(i+k,j+k)==0 || $tile[i+k][j+k]<0)break;//駒があったら✖
+    }
+}
+
+\hisha{
+    for (kj=1; kj<$habay; kj++) {//前に∞
+        if (s(i,j-kj)==0 || $tile[i][j-kj]>0)break;//駒があったら✖
+        red(0,-kj);
+        if (s(i,j-kj)==0 || $tile[i][j-kj]<0)break;//駒があったら✖
+    }
+    for (kj=1; kj<$habay; kj++) {//後に∞
+        if (s(i,j+kj)==0 || $tile[i][j+kj]>0)break;//駒があったら✖
+        red(0,kj);
+        if (s(i,j+kj)==0 || $tile[i][j+kj]<0)break;//駒があったら✖
+    }
+    for (ki=1; ki<$habax; ki++) {//左に∞
+        if (s(i-ki,j)==0 || $tile[i-ki][j]>0)break;//駒があったら✖
+        red(-ki,0);
+        if (s(i-ki,j)==0 || $tile[i-ki][j]<0)break;//駒があったら✖
+    }
+    for (ki=1; ki<$habax; ki++) {//右に∞
+        if (s(i+ki,j)==0 || $tile[i+ki][j]>0)break;//駒があったら✖
+        red(ki,0);
+        if (s(i+ki,j)==0 || $tile[i+ki][j]<0)break;//駒があったら✖
+    }
+}
+
+\ou{
+    red(-1,-1);//左前
+    red(0,-1);//前
+    red(1,-1);//右前
+    red(-1,0);//左
+    red(1,0);//右
+    red(-1,1);//左後
+    red(0,1);//後
+    red(1,1);//右後
+}
+///
+x=z(i);
+y=z(j);
+p=$pat_koma+$pic[t-1];
+
+while(1){
+    if ($tile[i][j]==0){
+        die();
+    }
+    if ($turn==1 && $tegoma==0){
+        switch (t){
+            case 1:
+            if (findTouch(1) && $select==0){//歩
+                $select=1;
+                $te=[i,j];
+                red(0,-1);//前
+            }
+            break;
+            case 2:
+            if (findTouch(1) && $select==0){//香車
+                $select=1;
+                $te=[i,j];
+                for (kj=1; kj<$habay; kj++) {//前に∞
+                    if ($tile[i][j-kj]>0)break;//駒があったら✖
+                    red(0,-kj);
+                    if ($tile[i][j-kj]<0)break;//駒があったら✖
+                }
+            }
+            break;
+            case 3:
+            if (findTouch(1) && $select==0){//桂馬
+                $select=1;
+                $te=[i,j];
+                red(-1,-2);//左前
+                red(1,-2);//右前
+            }
+            break;
+            case 4:
+            if (findTouch(1) && $select==0){//銀
+                $select=1;
+                $te=[i,j];
+                red(-1,-1);//左前
+                red(0,-1);//前
+                red(1,-1);//右前
+                red(-1,1);//左後
+                red(1,1);//右後
+            }
+            break;
+            case 5:
+            if (findTouch(1) && $select==0){//金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case 6:
+            if (findTouch(1) && $select==0){//角
+                $select=1;
+                $te=[i,j];
+                kaku;
+            }
+            break;
+            case 7:
+            if (findTouch(1) && $select==0){//飛車
+                $select=1;
+                $te=[i,j];
+                hisha;
+            }
+            break;
+            case 8:
+            if (findTouch(1) && $select==0){//王
+                $select=1;
+                $te=[i,j];
+                ou;
+            }
+            break;
+            case 9:
+            if (findTouch(1) && $select==0){//と金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case 10:
+            if (findTouch(1) && $select==0){//香金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case 11:
+            if (findTouch(1) && $select==0){//桂金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case 12:
+            if (findTouch(1) && $select==0){//銀金
+                $select=1;
+                $te=[i,j];
+                kin;
+            }
+            break;
+            case 13:
+            if (findTouch(1) && $select==0){//馬
+                $select=1;
+                $te=[i,j];
+                kaku;
+                ou;
+            }
+            break;
+            case 14:
+            if (findTouch(1) && $select==0){//竜
+                $select=1;
+                $te=[i,j];
+                hisha;
+                ou;
+            }
+            break;
+        }
+    }
+    
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mytegoma.tonyu' data-lastupdate='1721086894508' >includes Mainmanager;
+\red(ki,kj){
+    if (s(ki,kj) && $tile[ki][kj]==0){
+        $tilecolor[ki][kj]=1;
+    }
+}
+
+\tegomaoku(t){
+    if (findTouch(1) && $select==0 && $mytegoma[t-1]>=1){
+        $tegoma=t;
+        for (ki=0; ki<$habax; ki++) {
+            for (kj=0; kj<$habay; kj++) {
+                r=0;
+                if (t==1){//二歩対策
+                    for (kkj=0; kkj<$habay; kkj++) {
+                        r+=($tile[ki][kkj]==1);
+                    }
+                }
+                if (r==0)red(ki,kj);
+            }
+        }
+    }
+}
+
+///
+switch (j){
+    case 6:
+    t=i-9;
+    break;
+    case 7:
+    t=i-6;
+    break;
+    case 8:
+    t=i-4;
+    break;
+}
+x=z(i);
+y=z(j);
+p=$pat_koma+$pic[t-1];
+
+while(1){
+    if ($turn==1){
+        tegomaoku(t);
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Numlabel.tonyu' data-lastupdate='1721086898759' >extends Label;
+includes Mainmanager;
+
+x=z(i)+12;
+y=z(j)-18;
+size=18;
+fillStyle="red";
+
+if (f=="m"){
+    switch (j){
+        case 6:
+        t=i-9;
+        break;
+        case 7:
+        t=i-6;
+        break;
+        case 8:
+        t=i-4;
+        break;
+    }
+}
+else{
+    switch (j){
+        case 2:
+        t=i-9;
+        break;
+        case 1:
+        t=i-6;
+        break;
+        case 0:
+        t=i-4;
+        break;
+    }
+}
+
+while(1){
+    if (f=="m"){
+        text="×"+$mytegoma[t-1];
+    }
+    else{
+        text="×"+$entegoma[t-1];
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Plabel.tonyu' data-lastupdate='1721135518301' >extends Label;
+
+includes Mainmanager;
+
+x=z(9);
+
+size=20;
+
+
+if (f==1){
+    y=z(7);
+    text="1P";
+    fillStyle="orange";
+}
+else{
+    y=z(1);
+    text="2P";
+    fillStyle="green";
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Tetile.tonyu' data-lastupdate='1720937466009' >p=$pat_mapchip+94;</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Tile.tonyu' data-lastupdate='1721134543715' >includes Mainmanager;
+
+\tilecolorreset{
+    $select=0;
+    $tegoma=0;
+    for (ki=0; ki<$habax; ki++) {
+        for (kj=0; kj<$habay; kj++) {
+            $tilecolor[ki][kj]=0;
+        }
+    }
+}
+
+\naru(x){
+    if (x==1 || x==2 || x==3 || x==4)return(x+8);
+    if (x==6 || x==7)return(x+7);
+    if (x==-1 || x==-2 || x==-3 || x==-4)return(x-8);
+    if (x==-6 || x==-7)return(x-7);
+}
+
+\invnaru(x){
+    if (x>=-7 && x<=7)return(x);
+    if (x==9 || x==10 || x==11 || x==12)return(x-8);
+    if (x==13 || x==14)return(x-7);
+    if (x==-9 || x==-10 || x==-11 || x==-12)return(x+8);
+    if (x==-13 || x==-14)return(x+7);
+}
+///
+wait=0;
+while(1){
+    if ($tilecolor[i][j]==0){
+        p=$pat_mapchip+94;
+    }
+    else{
+        p=$pat_mapchip+95;
+        if (findTouch(1)){
+            if ($turn==1){//my
+                if ($naruhantei==0){//成る判定中は反応しない
+                    if ($tegoma==0){//手駒でない場合
+                        if ($tile[i][j]!=0){//敵を取る場合
+                            if ($tile[i][j]==-8){//王を取る
+                                $winner=1;
+                                $turn=2;
+                                break;
+                            }
+                            $mytegoma[invnaru(-$tile[i][j])-1]+=1;//手駒に追加
+                            mykoma(i,j,0);//行先のen消す
+                            update();//読み込む
+                        }
+                        if ((j<=2 || $te[1]<=2) && $tile[$te[0]][$te[1]]<=7 && $tile[$te[0]][$te[1]]!=5){//成る場合
+                            if ((j==0 && $tile[$te[0]][$te[1]]<=3) || (j==1 && $tile[$te[0]][$te[1]]==3)){//強制成る
+                                mykoma(i,j,naru($tile[$te[0]][$te[1]]));//my移動
+                                $change.die();
+                                $nochange.die();
+                                $naruhantei=0;
+                            }
+                            else{//任意成る
+                                $change=new Button{top:$screenHeight/2,width:200,height:40,left:$screenWidth/2-210,fillStyle:"red",text:"成る"};
+                                $nochange=new Button{top:$screenHeight/2,width:200,height:40,left:$screenWidth/2,fillStyle:"blue",text:"成らない"};
+                                $naruhantei=1;
+                            }
+                            while($naruhantei==1){
+                                if ($change.clicked==1){//成る場合
+                                    mykoma(i,j,naru($tile[$te[0]][$te[1]]));//my移動
+                                    $change.die();
+                                    $nochange.die();
+                                    $naruhantei=0;
+                                }
+                                if ($nochange.clicked==1){//成らない場合
+                                    mykoma(i,j,$tile[$te[0]][$te[1]]);//my移動
+                                    $change.die();
+                                    $nochange.die();
+                                    $naruhantei=0;
+                                }
+                            }
+                        }
+                        else{//成らない場合
+                            mykoma(i,j,$tile[$te[0]][$te[1]]);//my移動
+                        }
+                        mykoma($te[0],$te[1],0);//元のmy消す
+                        tilecolorreset;
+                        $turn*=-1;
+                    }
+                    else{//手駒から出す
+                        mykoma(i,j,$tegoma);
+                        $mytegoma[$tegoma-1]-=1;
+                        $tegoma=0;
+                        tilecolorreset;
+                        $turn*=-1;
+                    }
+                }
+            }
+            else{//en
+                if ($naruhantei==0){//成る判定中は反応しない
+                    if ($tegoma==0){//手駒でない場合
+                        if ($tile[i][j]!=0){//敵を取る場合
+                            if ($tile[i][j]==8){//王を取る
+                                $winner=2;
+                                $turn=2;
+                                break;
+                            }
+                            $entegoma[invnaru($tile[i][j])-1]+=1;//手駒に追加
+                            enkoma(i,j,0);//行先のmy消す
+                            update();//読み込む
+                        }
+                        if ((j>=6 || $te[1]>=6) && $tile[$te[0]][$te[1]]>=-7 && $tile[$te[0]][$te[1]]!=-5){//成る場合
+                            if ((j==8 && $tile[$te[0]][$te[1]]>=-3) || (j==7 && $tile[$te[0]][$te[1]]==-3)){//強制成る
+                                enkoma(i,j,naru($tile[$te[0]][$te[1]]));//en移動 
+                                $change.die();
+                                $nochange.die();
+                                $naruhantei=0;
+                            }
+                            else{
+                                $change=new Button{top:$screenHeight/2,width:200,height:40,left:$screenWidth/2-210,fillStyle:"red",text:"成る"};
+                                $nochange=new Button{top:$screenHeight/2,width:200,height:40,left:$screenWidth/2,fillStyle:"blue",text:"成らない"};
+                                $naruhantei=1;
+                            }
+                            while($naruhantei==1){
+                                if ($change.clicked==1){//成る場合
+                                    enkoma(i,j,naru($tile[$te[0]][$te[1]]));//en移動 
+                                    $change.die();
+                                    $nochange.die();
+                                    $naruhantei=0;
+                                }
+                                if ($nochange.clicked==1){//成らない場合
+                                    enkoma(i,j,$tile[$te[0]][$te[1]]);//en移動 
+                                    $change.die();
+                                    $nochange.die();
+                                    $naruhantei=0;
+                                }
+                            }
+                        }
+                        else{//成らない場合
+                            enkoma(i,j,$tile[$te[0]][$te[1]]);//en移動
+                        }
+                        enkoma($te[0],$te[1],0);//元のen消す
+                        tilecolorreset;
+                        $turn*=-1;
+                    }
+                    else{//手駒から出す
+                        enkoma(i,j,$tegoma);
+                        $entegoma[-$tegoma-1]-=1;
+                        $tegoma=0;
+                        tilecolorreset;
+                        $turn*=-1;
+                    }
+                }
+            }
+        }
+
+    }
+
+    if (getkey("C")==1){
+        tilecolorreset;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Titlelabel.tonyu' data-lastupdate='1721102322634' >extends Label;
+
+x=$screenWidth/2;
+y=$screenHeight/2-50;
+size=120;
+fillStyle="black";
+font="HGP行書体";
+text="セルフ将棋";</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Turnlabel.tonyu' data-lastupdate='1721135506703' >extends Label;
+includes Mainmanager;
+
+x=z(11)+12;
+y=z(4);
+size=20;
+fillStyle="yellow";
+
+while(1){
+    if ($turn==1){
+        text="1Pのターン";
+        fillStyle="orange";
+    }
+    else{
+        text="2Pのターン";
+        fillStyle="green";
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Winnerlabel.tonyu' data-lastupdate='1721135521390' >extends Label;
+
+x=$screenWidth/2;
+y=$screenHeight/2-50;
+size=120;
+
+while(1){
+    if ($winner==1){
+        text="1Pの勝利";
+        fillStyle="red";
+    }
+    if ($winner==2){
+        text="2Pの勝利";
+        fillStyle="green";
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1720963131157' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1721135675190' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "type": "wh",
+            "name": "$pat_koma",
+            "url": "ls:images/koma.png",
+            "pwidth": 32,
+            "pheight": 32
+        }
+    ],
+    "sounds": []
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/koma.png' data-wrap='80' data-lastupdate='1720943283604' >data:image/png;base64,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
+</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
