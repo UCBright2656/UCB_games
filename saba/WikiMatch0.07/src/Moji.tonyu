@@ -1,0 +1,17 @@
+//extends Button;
+while(true){
+    if (text0 != text){
+        text0=text;
+        //(text0);
+        t1=text0.slice(0,4);
+        t2=text0.slice(4,8);
+        //print(t2);
+        t3=text0.slice(8,12);
+        text=t1+"\n"+t2+"\n"+t3;
+        +"\n"+text0.slice(8,13);
+        text0=text0.slice(0,9);
+        y=y0-(floor(text0.length/5)*20);
+        text0=text;
+    }
+    update();
+}
