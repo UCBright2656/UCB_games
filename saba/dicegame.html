@@ -230,17 +230,17 @@ while(1){
     text=$tile[i][j][0];
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Clabel.tonyu' data-lastupdate='1721871995024' >extends Label;
+<script language='text/tonyu' type='text/tonyu' data-filename='Clabel.tonyu' data-lastupdate='1742650476061' >extends Label;
 
 includes Mainmanager;
 
-x=z(11)+12;
+x=z(11)-40;
 size=20;
 
 
 while(1){
     if ($select==1){
-        text="Cで選択を解除";
+        text="cancelボタンで選択を解除";
     }
     else text="";
     
@@ -290,7 +290,7 @@ while(1){
 update();}
 </script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1742647196359' >\start{
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1742650024108' >\start{
     all(Mainmanager).die();
     all(Mykoma).die();
     all(Enkoma).die();
@@ -339,7 +339,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mainmanager.tonyu' data-lastupdate='1742646199979' >\z(k){
+<script language='text/tonyu' type='text/tonyu' data-filename='Mainmanager.tonyu' data-lastupdate='1742650336755' >\z(k){
     return(30+k*49);
 }
 
@@ -404,6 +404,8 @@ new Turnlabel;
 $select=0;
 $turn=1;
 
+$cbutton=new Button{top:-10000};//存在する用
+
 new Auto;
 while(1){
     if ($encount==0){
@@ -416,7 +418,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Mykoma.tonyu' data-lastupdate='1742647149960' >includes Mainmanager;
+<script language='text/tonyu' type='text/tonyu' data-filename='Mykoma.tonyu' data-lastupdate='1742650379654' >includes Mainmanager;
 \red(di,dj){
     if (s(i+di,j+dj) && $tile[i+di][j+dj][0]<=0 && -$tile[i+di][j+dj][0]<=$tile[i][j][0]){
         $tilecolor[i+di][j+dj]=1;
@@ -442,7 +444,9 @@ while(1){
             $select=1;
             $te=[i,j];
             $tilecolor[i][j]=3;//背景色変える
-                        
+            
+            $cbutton=new Button{top:$screenHeight/2+150,width:200,height:40,left:$screenWidth/2+100,fillStyle:"yellow",text:"cancel"};
+
             red(0,-1);//前
             red(-1,0);//左
             red(1,0);//右
@@ -517,7 +521,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='Tile.tonyu' data-lastupdate='1742647184347' >includes Mainmanager;
+<script language='text/tonyu' type='text/tonyu' data-filename='Tile.tonyu' data-lastupdate='1742650364576' >includes Mainmanager;
 
 \tilecolorreset{
     $select=0;
@@ -624,8 +628,9 @@ while(1){
             */
             }
         }
-        if (getkey("C")==1){
+        if (getkey("C")==1 || $cbutton.clicked==1){
             tilecolorreset;
+            $cbutton.die();
         }
     }
 update();}</script>
@@ -675,7 +680,7 @@ while(1){
     }
 update();}</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1742646020377' >
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1742649761795' >
 {
     "compiler": {
         "namespace": "user",
@@ -701,7 +706,7 @@ update();}</script>
     "version": 1644637379023
 }</script>
 
-<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1742648758258' >
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1742650514875' >
 {
     "images": [
         {
