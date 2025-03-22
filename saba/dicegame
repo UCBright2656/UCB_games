@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="icon" href="https://ucbright2656.github.io/UCB_games/picture/op_logo3.png">
+<title>Optimus Games</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+<script>WebSite={runType:'singleHTML', useEditButton:false};</script><link rel="stylesheet" href="https://edit.tonyu.jp//css/runtime.css"/><script src="https://edit.tonyu.jp/images/base.png.js"></script>
+<script src="https://edit.tonyu.jp/images/Sample.png.js"></script>
+<script src="https://edit.tonyu.jp/images/neko.png.js"></script>
+<script src="https://edit.tonyu.jp/images/mapchip.png.js"></script>
+<script src="https://edit.tonyu.jp/js/lib/jquery-1.12.1.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/g2/runScript_concat.min.js" type="text/javascript"></script>
+<script src="https://edit.tonyu.jp/js/runtime/detectUnsupported.js"></script><script language='text/tonyu' type='text/tonyu' data-filename='Arrowlabel.tonyu' data-lastupdate='1721871995020' >extends Label;
+includes Mainmanager;
+
+size=12;
+
+while(1){
+    if ($tile[i][j][0]==0){
+        die();
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Auto.tonyu' data-lastupdate='1723536960463' >includes Mainmanager,Tile,Spintile;
+
+\autornd(rollnum,spinnum){
+    r=rnd(rollnum+spinnum);
+    if (r<rollnum){
+        return(rnd(4));
+    }
+    if (r>=rollnum){
+        return(rnd(2)+4);
+    }
+}
+
+\autos(ri,rj){
+    return(ri>=0&&ri<$habax&&rj>=0&&rj<$habay);
+}
+
+\autored(di,dj){//ランダムの時
+    if (autos(ri+di,rj+dj) && $tile[ri+di][rj+dj][0]>=0 && $tile[ri+di][rj+dj][0]<=-$tile[ri][rj][0]){
+        result=1;
+    }
+    else result=0;
+    return(result);
+}
+
+\killred(di,dj){//取りに行く時
+    if (autos(ri+di,rj+dj) && $tile[ri+di][rj+dj][0]>=1 && $tile[ri+di][rj+dj][0]<=-$tile[ri][rj][0]){
+        result=1;
+    }
+    else result=0;
+    return(result);
+}
+
+\autoroll(t){
+    switch (raction){
+        case 0://u
+        result=[inv(t[1]),t[0],t[2]];
+        break;
+        case 1://d
+        result=[t[1],inv(t[0]),t[2]];
+        break;
+        case 2://l
+        result=[inv(t[2]),t[1],t[0]];
+        break;
+        case 3://r
+        result=[t[2],t[1],inv(t[0])];
+        break;
+        default :
+        result=t;
+        break;
+    }
+    return(result);
+}
+
+while(1){
+    if ($turn==-1){
+//思考的な行動
+        for (ri=0; ri<$habax; ri++) {
+            for (rj=0; rj<$habay; rj++) {
+                if ($tile[ri][rj][0]<0){
+                    //取りに行く
+                    if (killred(0,-1)){//u
+                        $tilecolor[ri][rj]=2;//背景色変える
+                        updateEx(60);//1秒待つ(この間表示され続ける)
+                        $tilecolor[ri][rj]=0;//背景色戻す
+                        raction=0;//ここ変える
+                        enkoma(ri,rj-1,[0,0,0]);//行先のmy消す
+                        $mycount-=1;//カウントを減らす
+                        update();
+                        enkoma(ri,rj-1,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        $turn*=-1;
+                    }
+                    if (killred(0,1)){//d
+                        $tilecolor[ri][rj]=2;//背景色変える
+                        updateEx(60);//1秒待つ(この間表示され続ける)
+                        $tilecolor[ri][rj]=0;//背景色戻す
+                        raction=1;//ここ変える
+                        enkoma(ri,rj+1,[0,0,0]);//行先のmy消す
+                        $mycount-=1;//カウントを減らす
+                        update();
+                        enkoma(ri,rj+1,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        $turn*=-1;
+                    }
+                    if (killred(-1,0)){//l
+                        $tilecolor[ri][rj]=2;//背景色変える
+                        updateEx(60);//1秒待つ(この間表示され続ける)
+                        $tilecolor[ri][rj]=0;//背景色戻す
+                        raction=2;//ここ変える
+                        enkoma(ri-1,rj,[0,0,0]);//行先のmy消す
+                        $mycount-=1;//カウントを減らす
+                        update();
+                        enkoma(ri-1,rj,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        $turn*=-1;
+                    }
+                    if (killred(1,0)){//r
+                        $tilecolor[ri][rj]=2;//背景色変える
+                        updateEx(60);//1秒待つ(この間表示され続ける)
+                        $tilecolor[ri][rj]=0;//背景色戻す
+                        raction=3;//ここ変える
+                        enkoma(ri+1,rj,[0,0,0]);//行先のmy消す
+                        $mycount-=1;//カウントを減らす
+                        update();
+                        enkoma(ri+1,rj,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        $turn*=-1;
+                    }
+                }
+            }
+        }
+        if ($turn==-1){
+//以下ランダム行動
+            ri=rnd($habax);
+            rj=rnd($habay);
+            while($tile[ri][rj][0]>=0){//ランダムに赤サイコロを選択
+                ri=rnd($habax);
+                rj=rnd($habay);
+            }
+            action="prepare";
+            $tilecolor[ri][rj]=2;//背景色変える
+            updateEx(60);//1秒待つ(この間表示され続ける)
+            $tilecolor[ri][rj]=0;//背景色戻す
+        //
+            while(action=="prepare"){
+                raction=autornd(8,1);//ランダムに行動を選択(頻度変更可能)
+                switch (raction){
+                    case 0://u
+                    if (autored(0,-1)){
+                        if ($tile[ri][rj-1][0]!=0){//敵を取る場合
+                            enkoma(ri,rj-1,[0,0,0]);//行先のmy消す
+                            $mycount-=1;//カウントを減らす
+                            update();//読み込む
+                        }
+                        enkoma(ri,rj-1,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        action="finished";
+                    }
+                    break;
+                    case 1://d
+                    if (autored(0,1)){
+                        if ($tile[ri][rj+1][0]!=0){//敵を取る場合
+                            enkoma(ri,rj+1,[0,0,0]);//行先のmy消す
+                            $mycount-=1;//カウントを減らす
+                            update();//読み込む
+                        }
+                        enkoma(ri,rj+1,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        action="finished";
+                    }
+                    break;
+                    case 2://l
+                    if (autored(-1,0)){
+                        if ($tile[ri-1][rj][0]!=0){//敵を取る場合
+                            enkoma(ri-1,rj,[0,0,0]);//行先のmy消す
+                            $mycount-=1;//カウントを減らす
+                            update();//読み込む
+                        }
+                        enkoma(ri-1,rj,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        action="finished";
+                    }
+                    break;
+                    case 3://r
+                    if (autored(1,0)){
+                        if ($tile[ri+1][rj][0]!=0){//敵を取る場合
+                            enkoma(ri+1,rj,[0,0,0]);//行先のmy消す
+                            $mycount-=1;//カウントを減らす
+                            update();//読み込む
+                        }
+                        enkoma(ri+1,rj,autoroll($tile[ri][rj]));//en移動
+                        enkoma(ri,rj,[0,0,0]);//元のen消す
+                        action="finished";
+                    }
+                    break;
+                    case 4://spin+(反時計)
+                    s="+";
+                    karit=spin($tile[ri][rj]);
+                    enkoma(ri,rj,[0,0,0]);//元のmy消す 
+                    update();//読み込み
+                    enkoma(ri,rj,karit);//en再召喚
+                    action="finished";
+                    break;
+                    case 5://spin-(時計)
+                    s="-";
+                    karit=spin($tile[ri][rj]);
+                    enkoma(ri,rj,[0,0,0]);//元のmy消す 
+                    update();//読み込み
+                    enkoma(ri,rj,karit);//en再召喚
+                    action="finished";
+                    break;
+                }
+            }
+            $turn*=-1;
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Checklabel.tonyu' data-lastupdate='1742646160329' >extends Label;
+includes Mainmanager;
+
+x=z(i)+12;
+y=z(j)-18;
+size=18;
+fillStyle="green";
+
+while(1){
+    text=$tile[i][j][0];
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Clabel.tonyu' data-lastupdate='1721871995024' >extends Label;
+
+includes Mainmanager;
+
+x=z(11)+12;
+size=20;
+
+
+while(1){
+    if ($select==1){
+        text="Cで選択を解除";
+    }
+    else text="";
+    
+    if ($turn==1){
+        y=z(5);
+        fillStyle=$c1;
+    }
+    else{
+        y=z(3);
+        fillStyle=$c2;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Enkoma.tonyu' data-lastupdate='1721871995026' >includes Mainmanager;
+\red(di,dj){
+    if (s(i+di,j+dj) && $tile[i+di][j+dj][0]>=0 && $tile[i+di][j+dj][0]<=-$tile[i][j][0]){
+        $tilecolor[i+di][j+dj]=1;
+    }
+}
+
+///
+x=z(i);
+y=z(j);
+p=$pat_dice-t[0]+7;
+
+new Arrowlabel{i,j,x:z(i),y:z(j)-20,fillStyle=$c2,text=-t[1]};//up
+new Arrowlabel{i,j,x:z(i),y:z(j)+20,fillStyle=$c2,text=7+t[1]};//down
+new Arrowlabel{i,j,x:z(i)-20,y:z(j),fillStyle=$c2,text=-t[2]};//left
+new Arrowlabel{i,j,x:z(i)+20,y:z(j),fillStyle=$c2,text=7+t[2]};//right
+
+while(1){
+    if ($tile[i][j][0]==0){
+        die();
+    }
+    if ($turn==-1){
+        if (findTouch(1) && $select==0){//
+            $select=1;
+            $te=[i,j];
+            red(0,-1);//前
+            red(-1,0);//左
+            red(1,0);//右
+            red(0,1);//後
+            $spin=-1;
+        }
+    }
+    
+update();}
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Main.tonyu' data-lastupdate='1742647196359' >\start{
+    all(Mainmanager).die();
+    all(Mykoma).die();
+    all(Enkoma).die();
+    all(Spintile).die();
+    all(Tile).die();
+    all(Spin).die();
+    all(Auto).die();
+    all(Brain).die();
+    $frontLayer.all(Arrowlabel).die();
+    $frontLayer.all(Checklabel).die();
+    $frontLayer.all(Turnlabel).die();
+    $frontLayer.all(Winnerlabel).die();
+    $frontLayer.all(Plabel).die();
+    $frontLayer.all(Clabel).die();
+}
+
+$Screen.setBGColor("green");//背景
+$Screen.resize(650,405);
+
+$c1="blue";
+$c2="red";
+
+$bc1=$pat_dice+14;
+$bc2=$pat_dice+15;
+$bc3=$pat_dice+0;
+$bc4=$pat_dice+7;
+
+new Titlelabel;
+$start=new Button{top:$screenHeight/2+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"orange",text:"開始"};
+
+while(1){
+    if ($start.clicked==1){
+        $winner=0;
+        start;
+        $start.die();
+        $frontLayer.all(Titlelabel).die();
+        new Mainmanager;
+    }
+    
+    if ($turn==2){
+        $mycount=-1;
+        $encount=-1;
+        $turn=3;
+        $start=new Button{top:$screenHeight/2+100,width:200,height:40,left:$screenWidth/2-100,fillStyle:"yellow",text:"始めから"};
+        new Winnerlabel;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mainmanager.tonyu' data-lastupdate='1742646199979' >\z(k){
+    return(30+k*49);
+}
+
+\s(i,j){
+    return(i>=0&&i<$habax&&j>=0&&j<$habay);
+}
+
+\mykoma(i,j,t){
+    $tile[i][j]=t;
+    new Mykoma{i,j,t};
+}
+
+\enkoma(i,j,t){
+    $tile[i][j]=t;
+    new Enkoma{i,j,t};
+}
+
+///
+new Plabel{f:1};
+new Plabel{f:2};
+new Clabel;
+
+$habax=8;
+$habay=8;
+$haba=max($habax,$habay);
+
+$tile=new Array;
+$tilecolor=new Array;
+
+$spin=0;
+
+for (i=0; i<$habax; i++) {
+    $tile[i]=new Array;
+    $tilecolor[i]=new Array;
+    for (j=0; j<$habay; j++) {
+        new Tile{i,j,x:z(i),y:z(j),scaleX:1.5,scaleY:1.5};
+        //new Checklabel{i,j};//開発中はonにする
+        $tile[i][j]=[0,0,0];
+        $tilecolor[i][j]=0;
+    }
+}
+
+new Spintile{x:z(10),y:z(6),scaleX:1.5,scaleY:1.5,f:1,s:"+"};
+new Spintile{x:z(11),y:z(6),scaleX:1.5,scaleY:1.5,f:1,s:"-"};
+
+new Spintile{x:z(10),y:z(1),scaleX:1.5,scaleY:1.5,f:-1,s:"+"};
+new Spintile{x:z(11),y:z(1),scaleX:1.5,scaleY:1.5,f:-1,s:"-"};
+
+///
+$mycount=0;
+$encount=0;
+for (i=0; i<$habax; i++) {
+    mykoma(i,$habay-1,[1,2,3]);
+    $mycount+=1;
+}
+for (i=0; i<$habax; i++) {
+    enkoma(i,0,[-1,-5,-4]);
+    $encount+=1;
+}
+///
+new Turnlabel;
+$select=0;
+$turn=1;
+
+new Auto;
+while(1){
+    if ($encount==0){
+        $turn=2;
+        $winner=1;
+    }
+    if ($mycount==0){
+        $turn=2;
+        $winner=2;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Mykoma.tonyu' data-lastupdate='1742647149960' >includes Mainmanager;
+\red(di,dj){
+    if (s(i+di,j+dj) && $tile[i+di][j+dj][0]<=0 && -$tile[i+di][j+dj][0]<=$tile[i][j][0]){
+        $tilecolor[i+di][j+dj]=1;
+    }
+}
+
+///
+x=z(i);
+y=z(j);
+p=$pat_dice+t[0];
+
+new Arrowlabel{i,j,x:z(i),y:z(j)-20,fillStyle=$c1,text=t[1]};//up
+new Arrowlabel{i,j,x:z(i),y:z(j)+20,fillStyle=$c1,text=7-t[1]};//down
+new Arrowlabel{i,j,x:z(i)-20,y:z(j),fillStyle=$c1,text=t[2]};//left
+new Arrowlabel{i,j,x:z(i)+20,y:z(j),fillStyle=$c1,text=7-t[2]};//right
+
+while(1){
+    if ($tile[i][j][0]==0){
+        die();
+    }
+    if ($turn==1){
+        if (findTouch(1) && $select==0){//
+            $select=1;
+            $te=[i,j];
+            $tilecolor[i][j]=3;//背景色変える
+                        
+            red(0,-1);//前
+            red(-1,0);//左
+            red(1,0);//右
+            red(0,1);//後
+            $spin=1;
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Plabel.tonyu' data-lastupdate='1721871995053' >extends Label;
+
+includes Mainmanager;
+
+x=z(9);
+
+size=20;
+
+
+if (f==1){
+    y=z(6);
+    text="1P";
+    fillStyle=$c1;
+}
+else{
+    y=z(1);
+    text="2P";
+    fillStyle=$c2;
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Spin.tonyu' data-lastupdate='1721871995056' >scaleX=0.15;</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Spintile.tonyu' data-lastupdate='1721879917118' >includes Mainmanager,Tile;
+
+\spin(t){
+    switch (s){
+        case "+":
+        result=[t[0],inv(t[2]),t[1]];
+        break;
+        case "-":
+        result=[t[0],t[2],inv(t[1])];
+        break;
+    }
+    return(result);
+}
+
+if (s=="+")new Spin{x,y,p:$pat_umo2+0};
+else new Spin{x,y,p:$pat_umo2+1};
+
+while(1){
+    if (f==$spin)p=$bc2;
+    else p=$bc1;
+    
+    if (findTouch(1) && $select==1){
+        if ($turn==1 && f==1){
+            karit=spin($tile[$te[0]][$te[1]]);
+            mykoma($te[0],$te[1],[0,0,0]);//元のmy消す
+            update();//読み込み
+            mykoma($te[0],$te[1],karit);//my再召喚
+            tilecolorreset;
+            $turn*=-1;
+        }
+        /*
+        if ($turn==-1 && f==-1){
+            karit=spin($tile[$te[0]][$te[1]]);
+            enkoma($te[0],$te[1],[0,0,0]);//元のmy消す 
+            update();//読み込み
+            enkoma($te[0],$te[1],karit);//en再召喚
+            tilecolorreset;
+            $turn*=-1;
+        }
+        */
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Tile.tonyu' data-lastupdate='1742647184347' >includes Mainmanager;
+
+\tilecolorreset{
+    $select=0;
+    $spin=0;
+    for (ki=0; ki<$habax; ki++) {
+        for (kj=0; kj<$habay; kj++) {
+            $tilecolor[ki][kj]=0;
+        }
+    }
+}
+
+\udlr{
+    switch (i-$te[0]){
+        case 1:
+        result="r";
+        break;
+        case -1:
+        result="l";
+        break;
+        case 0:
+        switch (j-$te[1]){
+            case 1:
+            result="d";
+            break;
+            case -1:
+            result="u";
+            break;
+            default :
+            result="error";
+            break;
+        }
+        break;
+    }
+    return(result);
+}
+
+\inv(k){//裏面
+    if (k<=0)return(-7-k);
+    else return(7-k);
+}
+
+\roll(t){
+    switch (udlr){
+        case "u":
+        result=[inv(t[1]),t[0],t[2]];
+        break;
+        case "d":
+        result=[t[1],inv(t[0]),t[2]];
+        break;
+        case "l":
+        result=[inv(t[2]),t[1],t[0]];
+        break;
+        case "r":
+        result=[t[2],t[1],inv(t[0])];
+        break;
+        default :
+        result=t;
+        break;
+    }
+    return(result);
+}
+
+///
+wait=0;
+while(1){
+    if ($tilecolor[i][j]==2 || $tilecolor[i][j]==3){
+        if ($tilecolor[i][j]==2){
+            p=$bc3;
+        }
+        if ($tilecolor[i][j]==3){
+            p=$bc4;
+        }
+    }
+    else{
+        if ($tilecolor[i][j]==0){
+            p=$bc1;
+        }
+        else{
+            p=$bc2;
+            if (findTouch(1)){
+                if ($turn==1){//my
+                    if ($tile[i][j][0]!=0){//敵を取る場合
+                        mykoma(i,j,[0,0,0]);//行先のen消す
+                        $encount-=1;//カウントを減らす
+                        update();//読み込む
+                    }
+                    mykoma(i,j,roll($tile[$te[0]][$te[1]]));//my移動
+                    mykoma($te[0],$te[1],[0,0,0]);//元のmy消す
+                    tilecolorreset;
+                    $turn*=-1;
+                }
+            /*
+            else{//en
+                if ($tile[i][j][0]!=0){//敵を取る場合
+                    enkoma(i,j,[0,0,0]);//行先のmy消す
+                    $mycount-=1;//カウントを減らす
+                    update();//読み込む
+                }
+                enkoma(i,j,roll($tile[$te[0]][$te[1]]));//en移動
+                enkoma($te[0],$te[1],[0,0,0]);//元のen消す
+                tilecolorreset;
+                $turn*=-1;
+            }
+            */
+            }
+        }
+        if (getkey("C")==1){
+            tilecolorreset;
+        }
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Titlelabel.tonyu' data-lastupdate='1721871995063' >extends Label;
+
+x=$screenWidth/2;
+y=$screenHeight/2-50;
+size=120;
+fillStyle="white";
+font="Courier New";
+text="dicegame";</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Turnlabel.tonyu' data-lastupdate='1721871995065' >extends Label;
+includes Mainmanager;
+
+x=z(11)+12;
+y=z(4);
+size=20;
+fillStyle="yellow";
+
+while(1){
+    if ($turn==1){
+        text="1Pのターン";
+        fillStyle=$c1;
+    }
+    else{
+        text="2Pのターン";
+        fillStyle=$c2;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='Winnerlabel.tonyu' data-lastupdate='1721871995067' >extends Label;
+
+x=$screenWidth/2;
+y=$screenHeight/2-50;
+size=120;
+
+while(1){
+    if ($winner==1){
+        text="1Pの勝利";
+        fillStyle=$c1;
+    }
+    if ($winner==2){
+        text="2Pの勝利";
+        fillStyle=$c2;
+    }
+update();}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='options.json' data-lastupdate='1742646020377' >
+{
+    "compiler": {
+        "namespace": "user",
+        "defaultSuperClass": "kernel.Actor",
+        "dependingProjects": [
+            {
+                "namespace": "kernel"
+            }
+        ]
+    },
+    "run": {
+        "mainClass": "user.Main",
+        "bootClass": "kernel.Boot",
+        "globals": {
+            "$defaultFPS": 60,
+            "$imageSmoothingDisabled": true,
+            "$soundLoadAndDecode": false
+        }
+    },
+    "plugins": {},
+    "kernelEditable": false,
+    "language": "tonyu",
+    "version": 1644637379023
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='res.json' data-lastupdate='1742648758258' >
+{
+    "images": [
+        {
+            "name": "$pat_base",
+            "url": "images/base.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_sample",
+            "url": "images/Sample.png"
+        },
+        {
+            "name": "$pat_neko",
+            "url": "images/neko.png",
+            "pwidth": 32,
+            "pheight": 32
+        },
+        {
+            "name": "$pat_mapchip",
+            "url": "images/mapchip.png",
+            "pwidth": 32,
+            "pheight": 32,
+            "type": "wh"
+        },
+        {
+            "type": "wh",
+            "name": "$pat_umo2",
+            "url": "ls:images/umo2.png",
+            "pwidth": 284,
+            "pheight": 268
+        },
+        {
+            "type": "wh",
+            "name": "$pat_dice",
+            "url": "ls:images/dice.png",
+            "pwidth": 32,
+            "pheight": 32
+        }
+    ],
+    "sounds": []
+}</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/dice.png' data-wrap='80' data-lastupdate='1721871995031' >data:image/png;base64,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
+</script>
+
+<script language='text/tonyu' type='text/tonyu' data-filename='images/umo2.png' data-wrap='80' data-lastupdate='1721871995035' >data:image/png;base64,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\
+/Auf8PaJcTQ9tgSUQAAAAASUVORK5CYII=
+</script>
+
+</head><body><div id='splash' style='position:relative; height: 100%;'>
+    <!--ここに，ロード中に表示する内容を記述できます。-->
+    <!--You can write here what you want to show while loading. -->
+    <div class='progress'>
+        <!-- ここにロード中の進捗が表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows progress. If you don't want to show, remove this element. -->
+    </div>
+    <div class='unsupported' style="display:none;">
+        <!-- ここに非対応ブラウザ向けメッセージが表示されます．表示したくない場合はこのdiv要素を削除してください。 -->
+        <!-- This shows message for unsupported browsers. If you don't want to show, remove this element. -->
+        <p>お使いのブラウザではこのプログラムは動作しません．他のブラウザをお試しください．</p>
+        <p>The program does not run in this browser. Try another browser.</p>
+    </div>
+</div>
+<!--
+Open this site when editing this game:
+https://edit.tonyu.jp/index.html?importFromHTML=1
+--></body></html>
