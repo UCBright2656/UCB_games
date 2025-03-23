@@ -602,6 +602,7 @@ while(1){
         else{
             p=$bc2;
             if (findTouch(1)){
+                $cbutton.die();
                 if ($turn==1){//my
                     if ($tile[i][j][0]!=0){//敵を取る場合
                         mykoma(i,j,[0,0,0]);//行先のen消す
